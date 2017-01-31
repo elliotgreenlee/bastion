@@ -1,37 +1,23 @@
-## Welcome to GitHub Pages
+## Bastion
 
-You can use the [editor on GitHub](https://github.com/jaredthecoder/bastion/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+```
+me at host $ bastion
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+bastion> mkfs
+Filesystem created at "bastion.fs"!
+bastion> tree
+.
+├── dir1
+│   ├── file1
+│   └── file2
+└── dir2
+    ├── dir3
+    │   └── file4
+    └── file3
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+3 directories, 4 files
+bastion>
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/jaredthecoder/bastion/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+> I’ve missed more than 9000 shots in my career. I’ve lost almost 300 games. 26 times I’ve been trusted to take the game winning shot and missed. I’ve failed over and over and over again in my life. And that is why I succeed.
+> Bastion Design Team (original: Michael Jordan)
