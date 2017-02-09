@@ -31,13 +31,18 @@ class FileSystem:
         pickle.dump(self, open(self.CONST_FILE_SYSTEM_NAME, "wb"))
         return
 
+    def add_child(self, child):
+        self.children.append(child)
+
 
 class Directory:
     def __init__(self, parent, name):
         self.name = name
         self.parent = parent
         self.children = []
-        return
+
+    def add_child(self, child):
+        self.children.append(child)
 
 
 class File:
@@ -48,4 +53,3 @@ class File:
         self.size = 0
         self.content = ""  # Binary?
         self.offset = 0
-        return

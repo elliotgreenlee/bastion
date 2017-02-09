@@ -3,7 +3,6 @@ class Command:
         self.output = input;
         self.input = output;
         self.file_system = file_system;
-        return
 
     def run(self):
         # TODO: all subclasses except mkfs need to only run
@@ -19,7 +18,7 @@ class MKFS(Command):
 
     def run(self):
         if self.file_system.exists:
-            print ("Are you sure you want to clear the old file system? \n")
+            print("Are you sure you want to clear the old file system? \n")
             # TODO: Get confirmation to clear old system
         else:
             self.file_system.create()

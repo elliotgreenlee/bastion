@@ -12,8 +12,8 @@ class Shell(object):
     def get_file_system(self):
         file_system = FileSystem()
         while not file_system.exists:
-            print ">> Type mkfs to create a new file system \n"
-            print ">>"
+            print(">> Type mkfs to create a new file system \n")
+            print(">>")
             self.parse(self.read_next_line())
 
         return file_system
@@ -21,7 +21,7 @@ class Shell(object):
     # The main loop of shell
     def run(self):
         while True:
-            print ">> "
+            print(">> ")
             self.parse(self.read_next_line())
 
     # Read in the next line of input from the console
