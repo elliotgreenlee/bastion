@@ -1,7 +1,7 @@
-import FileSystem
+from bastion.filesystem import FileSystem
 
 
-class Shell:
+class Shell(object):
     def __init__(self):
         self.current_line = ""
         self.file_system = self.get_file_system()
