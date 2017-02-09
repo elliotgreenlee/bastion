@@ -1,25 +1,40 @@
+from bastion.validators import YesNoValidator
+
+
+def call_command(cmd_str, args):
+    if cmd_str == 'mkfs':
+        return MKFS(*args)
+    elif cmd_str == 'open':
+        return Open(*args)
+    elif cmd_str == 'read':
+        return Read(*args)
+
+
 class Command:
-    def __init__(self, file_system, input, output):
-        self.output = input;
-        self.input = output;
-        self.file_system = file_system;
+    def __init__(self, file_system, input, output=None):
+        self.file_system = file_system
+        self.input = output
+        self.output = input
 
     def run(self):
-        # TODO: all subclasses except mkfs need to only run
-        # when file_system.exists is true. Should that be checked outside?
-        return
+        pass
 
 
 # Make a new file system, i.e., format the disk so that it
 # is ready for other file system operations.
 class MKFS(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, file_system, input):
+        super().__init__(file_system, input)
 
     def run(self):
+        from bastion.shell import accept_input
         if self.file_system.exists:
-            print("Are you sure you want to clear the old file system? \n")
-            # TODO: Get confirmation to clear old system
+            print("Are you sure you want to clear the old file system? (y/n)")
+            input = accept_input(validator=YesNoValidator)
+            if input in ['yes', 'y']:
+                self.file_system.create()
+            elif input in ['no', 'n']:
+                print("Not overwriting filesystem.")
         else:
             self.file_system.create()
 
@@ -33,8 +48,8 @@ class MKFS(Command):
 # print an integer as the fd of the file.
 # Example: open foo w shell returns SUCCESS, fd=5
 class Open(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super().__init__(*args)
         filename = ""
         flag = ""
 
@@ -48,8 +63,8 @@ class Open(Command):
 # Example: read 5 10 shell returns the contents of the file
 # (assuming it has been written)
 class Read(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super().__init__(*args)
         fd = ""
         size = ""
 
