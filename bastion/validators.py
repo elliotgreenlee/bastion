@@ -25,4 +25,15 @@ class CommandValidator(Validator):
             if text not in commands:
                 raise ValidationError(message='This input is not a valid command.',
                                       cursor_position=0)
+            print('\nGot command: {}'.format(text))
+
+
+class MkfsValidator(Validator):
+    def validate(self, document):
+        text = document.text
+
+        if text:
+            if text != 'mkfs':
+                raise ValidationError(message='Please call mkfs when the file system does not yet exist.',
+                                      cursor_position=0)
 

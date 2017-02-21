@@ -5,10 +5,13 @@ class FileSystem:
     CONST_FILE_SYSTEM_NAME = "file_system.p"
     open_files = []
 
-    def __init__(self):
+    def __init__(self, filesystem=None):
         try:
-            pickle_load = self.load(self.find())
-            self.total_size = pickle_load.total_size
+            if filesystem is not None:
+                pickle_load = open(filesystem, 'rb')
+            else:
+                pickle_load = self.load(self.find())
+            self.total_size = pickle_load.total_sizes
             self.children = pickle_load.children
             self.root = pickle_load.root
             self.exists = True
