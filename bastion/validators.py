@@ -1,3 +1,8 @@
+"""
+    Input validation classes.
+"""
+
+
 from prompt_toolkit.validation import Validator, ValidationError
 
 
@@ -25,7 +30,6 @@ class CommandValidator(Validator):
             if text not in commands:
                 raise ValidationError(message='This input is not a valid command.',
                                       cursor_position=0)
-            print('\nGot command: {}'.format(text))
 
 
 class MkfsValidator(Validator):

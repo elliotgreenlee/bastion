@@ -3,18 +3,18 @@ from bastion.validators import YesNoValidator
 
 def call_command(cmd_str, args):
     if cmd_str == 'mkfs':
-        return MKFS(*args)
+        return MKFS(*args).run()
     elif cmd_str == 'open':
-        return Open(*args)
+        return Open(*args).run()
     elif cmd_str == 'read':
-        return Read(*args)
+        return Read(*args).run()
 
 
 class Command:
-    def __init__(self, file_system, input, output=None):
+    def __init__(self, file_system, prompt_input, prompt_output=None):
         self.file_system = file_system
-        self.input = output
-        self.output = input
+        self.prompt_input = prompt_input
+        self.prompt_output = prompt_output
 
     def run(self):
         pass
@@ -23,20 +23,20 @@ class Command:
 # Make a new file system, i.e., format the disk so that it
 # is ready for other file system operations.
 class MKFS(Command):
-    def __init__(self, file_system, input):
-        super().__init__(file_system, input)
+    def __init__(self, file_system, prompt_input):
+        super().__init__(file_system, prompt_input)
 
     def run(self):
         from bastion.shell import accept_input
-        if self.file_system.exists:
+        if self.file_system.on_disk():
             print("Are you sure you want to clear the old file system? (y/n)")
-            input = accept_input(validator=YesNoValidator)
-            if input in ['yes', 'y']:
-                self.file_system.create()
-            elif input in ['no', 'n']:
+            prompt_input = accept_input(validator=YesNoValidator())
+            if prompt_input in ['yes', 'y']:
+                self.file_system.initialize()
+            elif prompt_input in ['no', 'n']:
                 print("Not overwriting filesystem.")
         else:
-            self.file_system.create()
+            self.file_system.initialize()
 
 
 # Open a file with the given <flag>, return a file
