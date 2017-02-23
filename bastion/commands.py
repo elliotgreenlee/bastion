@@ -1,4 +1,5 @@
 from bastion.validators import YesNoValidator
+from .filesystem import *
 
 
 def call_command(cmd_str, args):
@@ -121,6 +122,14 @@ class MKDIR(Command):
         dirname = ""
 
     def run(self):
+        # Check if directory already exists
+        exists = False
+        for child in self.current_directory.children:
+            if self.dirname == child.name:
+                exists = True
+
+        new_directory = Directory(self.current_directory, self.dirname)  # create new directory
+        self.current_directory.add_child(new_directory)
         return
 
 
