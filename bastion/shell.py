@@ -2,15 +2,13 @@
     Bastion shell.
 """
 
-import os
+from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
-
-from prompt_toolkit import prompt
 
 from bastion.filesystem import FileSystem
 from bastion.commands import MKFS, Open, Read
-from bastion.validators import CommandValidator
-from bastion.validators import MkfsValidator
+from bastion.validators import validate_command
+from bastion.validators import validate_mkfs
 
 
 def accept_input(validator=None):
@@ -22,11 +20,14 @@ def accept_input(validator=None):
     """
     try:
         if validator is None:
-            text = prompt('bastion> ', vi_mode=True)
+            text = raw_input("bastion> ")
         else:
-            text = prompt('bastion> ', vi_mode=True, validator=validator)
+            text = raw_input("bastion> ")
+            if not validator(text):
+                return None
+
     except KeyboardInterrupt:
-        print('Exitting!')
+        print("Exitting!")
         sys.exit(0)
     return text
 
@@ -60,7 +61,9 @@ class Shell(object):
         while True:
             if not self.file_system.on_disk():
                 print("Type mkfs to create a new file system.")
-                text = accept_input(validator=MkfsValidator())
+                text = accept_input(validator=validate_mkfs)
+                if text is None:
+                    continue
                 if text == 'mkfs':
                     MKFS(self.file_system, None).run()
             else:
@@ -68,7 +71,9 @@ class Shell(object):
                 break
 
         while True:
-            prompt_input = accept_input(validator=CommandValidator())
+            prompt_input = accept_input(validator=validate_command)
+            if prompt_input is None:
+                continue
             self.parse(prompt_input)
 
     # Parse the next line and call the related command
@@ -96,9 +101,9 @@ class Shell(object):
         # and specific command arguments
         # Maybe all commands don't need input location from redirection
 
-        if prompt_input == 'mkfs':
+        if prompt_input == "mkfs":
             return MKFS(self.file_system, None).run()
-        elif prompt_input == 'open':
+        elif prompt_input == "open":
             return Open(self.file_system).run()
-        elif prompt_input == 'read':
+        elif prompt_input == "read":
             return Read().run()

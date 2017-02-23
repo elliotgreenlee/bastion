@@ -1,5 +1,5 @@
-from bastion.validators import YesNoValidator
 from .filesystem import *
+from bastion.validators import validate_yes_no
 
 
 def call_command(cmd_str, args):
@@ -11,7 +11,7 @@ def call_command(cmd_str, args):
         return Read(*args).run()
 
 
-class Command:
+class Command(object):
     def __init__(self, file_system, prompt_input, prompt_output=None):
         self.file_system = file_system
         self.prompt_input = prompt_input
@@ -25,17 +25,22 @@ class Command:
 # is ready for other file system operations.
 class MKFS(Command):
     def __init__(self, file_system, prompt_input):
-        super().__init__(file_system, prompt_input)
+        super(MKFS, self).__init__(file_system, prompt_input)
 
     def run(self):
         from bastion.shell import accept_input
         if self.file_system.on_disk():
-            print("Are you sure you want to clear the old file system? (y/n)")
-            prompt_input = accept_input(validator=YesNoValidator())
-            if prompt_input in ['yes', 'y']:
-                self.file_system.initialize()
-            elif prompt_input in ['no', 'n']:
-                print("Not overwriting filesystem.")
+            while True:
+                print("Are you sure you want to clear the old file system? (y/n)")
+                prompt_input = accept_input(validator=validate_yes_no)
+                if prompt_input is None:
+                    continue
+                if prompt_input in ['yes', 'y']:
+                    self.file_system.initialize()
+                    break
+                elif prompt_input in ['no', 'n']:
+                    print("Not overwriting filesystem.")
+                    break
         else:
             self.file_system.initialize()
 
