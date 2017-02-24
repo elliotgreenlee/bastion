@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys
 
 from bastion.filesystem import FileSystem
-from bastion.commands import MKFS, Open, Read
+from bastion.commands import *
 from bastion.validators import validate_command
 from bastion.validators import validate_mkfs
 
@@ -82,25 +82,102 @@ class Shell(object):
         :return:
         """
 
-        # TODO: ASK IN CLASS IF EACH COMMAND NEEDS TO SUPPORT REDIRECTION, OR JUST sh
-        # TODO: Determine if redirection
-        # TODO: Determine input location (would this need to open the file?)
-        # TODO: Determine output location
+        input_pieces = str.split(prompt_input)
+        if len(input_pieces) == 0:
+            print("no")  # TODO: tell user to try again
+            return
 
-        # TODO: determine command
+        cmd_str = input_pieces[0]
+        # TODO: refactor the length of the input_pieces-1 as number_of_arguments
 
-        # TODO: determine command arguments
+        # Determine command
+        if cmd_str == 'mkfs':
+            if len(input_pieces) != 1:
+                print("no")  # TODO: tell user to try again
+                return
 
-        # TODO: determine if valid
+            return MKFS(*args).run
+        elif cmd_str == 'open':
+            if len(input_pieces) != 3:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Open(*args).run()
+        elif cmd_str == 'read':
+            if len(input_pieces) != 3:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Read(*args).run()
+        elif cmd_str == 'write':
+            if len(input_pieces) != 3:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Write(*args).run()
+        elif cmd_str == 'seek':
+            if len(input_pieces) != 3:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Seek(*args).run()
+        elif cmd_str == 'close':
+            if len(input_pieces) != 2:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Close(*args).run()
+        elif cmd_str == 'mkdir':
+            if len(input_pieces) != 2:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return MKDIR(*args).run()
+        elif cmd_str == 'rmdir':
+            if len(input_pieces) != 2:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return RMDIR(*args).run()
+        elif cmd_str == 'cd':
+            if len(input_pieces) != 2:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return CD(*args).run()
+        elif cmd_str == 'ls':
+            if len(input_pieces) != 1:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return LS().run()
+        elif cmd_str == 'cat':
+            if len(input_pieces) != 2:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return CAT(*args).run()
+        elif cmd_str == 'tree':
+            if len(input_pieces) != 1:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Tree().run()
+        elif cmd_str == 'import':
+            if len(input_pieces) != 3:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Import(*args).run()
+        elif cmd_str == 'export':
+            if len(input_pieces) != 3:
+                print("no")  # TODO: tell user to try again
+                return
+
+            return Export(*args).run()
+        else:
+            print("no")
+            # TODO: Tell user to try again
 
         # TODO: Call specific command init with arguments
-        # file_system, current_directory, input location, output location,
-        # and specific command arguments
-        # Maybe all commands don't need input location from redirection
-
-        if prompt_input == "mkfs":
-            return MKFS(self.file_system, None).run()
-        elif prompt_input == "open":
-            return Open(self.file_system).run()
-        elif prompt_input == "read":
-            return Read().run()
+        # file_system, current_directory, and specific command arguments

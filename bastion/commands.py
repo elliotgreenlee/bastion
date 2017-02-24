@@ -2,37 +2,6 @@ from .filesystem import *
 from bastion.validators import validate_yes_no
 
 
-def call_command(cmd_str, args):
-    if cmd_str == 'mkfs':
-        return MKFS(*args).run()
-    elif cmd_str == 'open':
-        return Open(*args).run()
-    elif cmd_str == 'read':
-        return Read(*args).run()
-    elif cmd_str == 'write':
-        return Write(*args).run()
-    elif cmd_str == 'seek':
-        return Seek(*args).run()
-    elif cmd_str == 'close':
-        return Close(*args).run()
-    elif cmd_str == 'mkdir':
-        return MKDIR(*args).run()
-    elif cmd_str == 'rmdir':
-        return RMDIR(*args).run()
-    elif cmd_str == 'cd':
-        return CD(*args).run()
-    elif cmd_str == 'ls':
-        return LS().run()
-    elif cmd_str == 'cat':
-        return CAT(*args).run()
-    elif cmd_str == 'tree':
-        return Tree().run()
-    elif cmd_str == 'import':
-        return Import(*args).run()
-    elif cmd_str == 'export':
-        return Export(*args).run()
-
-
 class Command(object):
     def __init__(self, file_system, prompt_input, prompt_output=None):
         self.file_system = file_system
@@ -62,8 +31,8 @@ class MKFS(Command):
 # print an integer as the fd of the file.
 # Example: open foo w shell returns SUCCESS, fd=5
 class Open(Command):
-    def __init__(self, args):
-        super(Open, self).__init__(*args)
+    def __init__(self, file_system, args):
+        super(Open, self).__init__(file_system, *args)
         filename = ""
         flag = ""
 
@@ -175,6 +144,7 @@ class LS(Command):
         super(LS, self).__init__()
 
     def run(self):
+        self.
         return
 
 
