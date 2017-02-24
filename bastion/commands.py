@@ -213,11 +213,27 @@ class Tree():
         self.file_system = self.shell.file_system
 
     def run(self):
-        # TODO: call tree_print(self.shell.current_directory, 0)
-            # tree_print iterates through each child.
-            # if file, print based on level
-            # if directory, print based on level, call tree_print(directory, level+1)
+        self.tree_print(self.shell.current_directory, 0)
+
         return
+
+    # TODO: get tab prints to go on the same line
+    def tree_print(self, directory, level):
+        # tree_print iterates through each child.
+        for child in directory.children:
+
+            # if file, print based on level
+            if isinstance(child, File):
+                for i in range(0, level):
+                    print('\t')
+                print child.name
+
+            # if directory, print based on level, call tree_print(directory, level+1)
+            if isinstance(child, Directory):
+                for i in range(0, level):
+                    print('\t')
+                print child.name
+                self.tree_print(child, level+1)
 
 
 # Import a file from the host machine file system to
