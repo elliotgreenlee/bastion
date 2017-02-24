@@ -2,8 +2,6 @@ from .filesystem import *
 from bastion.validators import validate_yes_no
 
 
-# TODO: pass shell to every function, it has the file system
-
 # Make a new file system, i.e., format the disk so that it
 # is ready for other file system operations.
 class MKFS():
@@ -115,6 +113,8 @@ class MKDIR():
         self.dirname = dirname
 
     def run(self):
+        # TODO: check name for '..' and say "mkdir: ..: File exists"
+
         # Check if directory already exists
         if self.shell.current_directory.find_child(self.dirname) is not None:
             print('mkdir: ' + self.dirname + ': File exists')
@@ -136,6 +136,14 @@ class RMDIR():
         self.dirname = dirname
 
     def run(self):
+        # TODO: check name for '..' and say "rmdir: ..: Directory not empty"
+
+        deletion = self.shell.current_directory.find_child(self.dirname)
+        if deletion is None:
+            print('rmdir: ' + self.dirname + ': No such file or directory')
+            return
+
+        self.shell.current_directory.children.remove(deletion)
         return
 
 
@@ -205,6 +213,10 @@ class Tree():
         self.file_system = self.shell.file_system
 
     def run(self):
+        # TODO: call tree_print(self.shell.current_directory, 0)
+            # tree_print iterates through each child.
+            # if file, print based on level
+            # if directory, print based on level, call tree_print(directory, level+1)
         return
 
 

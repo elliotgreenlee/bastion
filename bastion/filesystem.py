@@ -45,6 +45,7 @@ class FileSystem:
     def add_child(self, child):
         self.children.append(child)
 
+# TODO: do we want to put the parent in the list of children with the name '..'? how does that work with pointers?
 
 class Directory:
     def __init__(self, parent, name):
@@ -54,7 +55,7 @@ class Directory:
 
     def add_child(self, child):
         self.children.append(child)
-        
+
     def find_child(self, name):
         for child in self.children:
             if name == child.name:
