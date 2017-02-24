@@ -9,6 +9,7 @@ class FileSystem:
     def __init__(self):
         self.exists = self.on_disk()
         self.total_size = 0
+        self.fd = 0
         self.children = []
         self.root = Directory(None, "/")
 
@@ -22,6 +23,7 @@ class FileSystem:
         # Overwrite old values
         self.exists = False
         self.total_size = 0
+        self.fd = 0
         self.children = []
         self.root = Directory(None, "/")
 
@@ -45,6 +47,11 @@ class FileSystem:
     def add_child(self, child):
         self.children.append(child)
 
+    def get_new_fd(self):
+        current_fd = self.fd
+        self.fd += 1
+        return current_fd
+
 
 # TODO: do we want to put the parent in the list of children with the name '..'? how does that work with pointers?
 class Directory:
@@ -63,10 +70,10 @@ class Directory:
 
 
 class File:
-    def __init__(self, parent):
-        self.name = None
+    def __init__(self, parent, name, fd):
+        self.name = name
         self.parent = parent
-        self.fd = 0
+        self.fd = fd
         self.size = 0
         self.content = b''
         self.offset = 0

@@ -31,11 +31,29 @@ class Open():
         self.flag = flag
 
     def run(self):
-        # if flag is r, check if it exists, error if not, return fd if yes
-        # if flag is w, create (overwrite if existing I think), return fd
+        # If reading mode
+        if self.flag == 'r':
+            opened_file = self.shell.current_directory.find_child(self.filename)
+            if opened_file is None:
+                print('open: ' + self.filename + ': No such file')
+                return
+            else:
+                print('Success, fd = ' + opened_file.fd)
 
-        # SUCCESS, fd=#
-        # FAILURE?? I guess
+        # If writing mode
+        if self.flag == 'w':
+            # Create new file
+            new_fd = self.file_system.get_new_fd()
+            new_file = File(self.shell.current_directory, self.filename, new_fd)
+
+            # Remove existing file of same name if it exists
+            existing_file = self.shell.current_directory.find_child(self.filename)
+            if existing_file is not None:
+                self.shell.current_directory.children.remove(existing_file)
+
+            self.shell.current_directory.add_child(new_file)
+            print('Success, fd = ' + new_file.fd)
+
         return
 
 
