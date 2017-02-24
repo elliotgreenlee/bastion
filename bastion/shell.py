@@ -126,7 +126,8 @@ class Shell(object):
                 return
 
             fd = input_pieces[1]
-            string = input_pieces[2:]
+            string = ' '.join(input_pieces[2:])
+            string = string[1:len(string)-1]
 
             return Write(self, fd, string).run()
         elif cmd_str == 'seek':

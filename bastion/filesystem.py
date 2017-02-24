@@ -48,8 +48,12 @@ class FileSystem:
         self.fd += 1
         return current_fd
 
+    def get_open_file(self, fd):
+        for file in self.open_files:
+            if str(fd) == str(file[0]):
+                return file[2]
 
-# TODO: do we want to put the parent in the list of children with the name '..'? how does that work with pointers?
+
 class Directory:
     def __init__(self, parent, name):
         self.name = name
@@ -72,6 +76,6 @@ class File:
         self.parent = parent
         self.fd = fd
         self.size = 4096
-        self.content = b''
+        self.content = ''
         self.offset = 0
         self.date = str(datetime.now())

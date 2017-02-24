@@ -100,8 +100,20 @@ class Write():
         self.string = string
 
     def run(self):
-        # if len(content) + len(string) > size, increase size by 4096
-        # move file offset forward by len(string)
+        # find file based on fd
+        open_file = self.file_system.get_open_file(self.fd)
+        if open_file is None:
+            print('write: ' + self.fd + ': that file is not open')
+            return
+
+        if len(open_file.content) + len(self.string) > open_file.size:
+            open_file.size += 4096;
+
+        new_content = open_file.content[0:open_file.offset] + self.string
+        open_file.offset += len(self.string)
+        new_content += open_file.content[open_file.offset:]
+        open_file.content = new_content
+
         return
 
 
@@ -198,7 +210,7 @@ class CD():
 
         move = self.recursive_cd(self.shell.current_directory, dirlist)
         if move is None:
-            print('cd: ' + self.dirname + ': No such file or directory')
+            print('cd: ' + self.dirname + ': Not a directory')
             return
 
         self.shell.current_directory = move
@@ -210,8 +222,8 @@ class CD():
             return current_directory
 
         move = current_directory.find_child(dirlist[0])
-        if move is None:
-            return move
+        if move is None or not isinstance(move, Directory):
+            return None
         else:
             return self.recursive_cd(move, dirlist[1:])
 
@@ -240,6 +252,13 @@ class CAT():
         self.filename = filename
 
     def run(self):
+        catted_file = self.shell.current_directory.find_child(self.filename)
+        # see if it exists, see if it is a file
+        if catted_file is None or not isinstance(catted_file, File):
+            print('cat: ' + self.filename + ': Not a file')
+            return
+
+        print catted_file.content
         return
 
 
