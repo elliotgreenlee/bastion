@@ -84,7 +84,6 @@ class Shell(object):
 
         input_pieces = str.split(prompt_input)
         if len(input_pieces) == 0:
-            print("no")  # TODO: tell user to try again
             return
 
         cmd_str = input_pieces[0]
@@ -99,13 +98,13 @@ class Shell(object):
         # Determine command
         if cmd_str == 'mkfs':
             if number_of_arguments != 0:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 0 arguments')
                 return
 
             return MKFS(self).run
         elif cmd_str == 'open':
             if number_of_arguments != 2:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 2 arguments')
                 return
 
             filename = input_pieces[1]
@@ -114,7 +113,7 @@ class Shell(object):
             return Open(self, filename, flag).run()
         elif cmd_str == 'read':
             if number_of_arguments != 2:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 2 arguments')
                 return
 
             fd = input_pieces[1]
@@ -123,7 +122,7 @@ class Shell(object):
             return Read(self, fd, size).run()
         elif cmd_str == 'write':
             if number_of_arguments != 2:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 2 arguments')
                 return
 
             fd = input_pieces[1]
@@ -132,7 +131,7 @@ class Shell(object):
             return Write(self, fd, string).run()
         elif cmd_str == 'seek':
             if number_of_arguments != 2:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 2 arguments')
                 return
 
             fd = input_pieces[1]
@@ -141,7 +140,7 @@ class Shell(object):
             return Seek(self, fd, offset).run()
         elif cmd_str == 'close':
             if number_of_arguments != 1:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 1 arguments')
                 return
 
             fd = input_pieces[1]
@@ -149,7 +148,7 @@ class Shell(object):
             return Close(self, fd).run()
         elif cmd_str == 'mkdir':
             if number_of_arguments != 1:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 1 arguments')
                 return
 
             dirname = input_pieces[1]
@@ -157,7 +156,7 @@ class Shell(object):
             return MKDIR(self, dirname).run()
         elif cmd_str == 'rmdir':
             if number_of_arguments != 1:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 1 arguments')
                 return
 
             dirname = input_pieces[1]
@@ -165,7 +164,7 @@ class Shell(object):
             return RMDIR(self, dirname).run()
         elif cmd_str == 'cd':
             if number_of_arguments != 1:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 1 arguments')
                 return
 
             dirname = input_pieces[1]
@@ -173,13 +172,13 @@ class Shell(object):
             return CD(self, dirname).run()
         elif cmd_str == 'ls':
             if number_of_arguments != 0:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 0 arguments')
                 return
 
             return LS(self).run()
         elif cmd_str == 'cat':
             if number_of_arguments != 1:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 1 arguments')
                 return
 
             filename = input_pieces[1]
@@ -187,13 +186,13 @@ class Shell(object):
             return CAT(self, filename).run()
         elif cmd_str == 'tree':
             if number_of_arguments != 0:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 0 arguments')
                 return
 
             return Tree(self).run()
         elif cmd_str == 'import':
             if number_of_arguments != 2:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 2 arguments')
                 return
 
             srcname = input_pieces[1]
@@ -202,7 +201,7 @@ class Shell(object):
             return Import(self, srcname, destname).run()
         elif cmd_str == 'export':
             if number_of_arguments != 2:
-                print("no")  # TODO: tell user to try again
+                print('usage: ' + cmd_str + ': 2 arguments')
                 return
 
             srcname = input_pieces[1]
@@ -210,6 +209,6 @@ class Shell(object):
 
             return Export(self, srcname, destname).run()
         else:
-            print("no")
+            print("Command not recognized")
             # TODO: Tell user to try again
 
