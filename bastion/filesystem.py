@@ -9,7 +9,7 @@ class FileSystem:
 
     def __init__(self):
         self.exists = self.on_disk()
-        self.total_size = 0
+        self.total_size = 20971520  # 20 megabytes allocated for overhead
         self.fd = 0
         self.open_files = []
         self.root = Directory(None, "/")
@@ -26,7 +26,7 @@ class FileSystem:
 
         # Overwrite old values
         self.exists = False
-        self.total_size = 0
+        self.total_size = 20971520  # 20 megabytes allocated for overhead
         self.fd = 0
         self.open_files = []
         self.root = Directory(None, "/")
@@ -71,7 +71,7 @@ class File:
         self.name = name
         self.parent = parent
         self.fd = fd
-        self.size = 0
+        self.size = 4096
         self.content = b''
         self.offset = 0
         self.date = str(datetime.now())

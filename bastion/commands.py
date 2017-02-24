@@ -100,6 +100,8 @@ class Write():
         self.string = string
 
     def run(self):
+        # if len(content) + len(string) > size, increase size by 4096
+        # move file offset forward by len(string)
         return
 
 
@@ -192,15 +194,26 @@ class CD():
         self.dirname = dirname
 
     def run(self):
-        # TODO: get working with multiple ../../dirname in one go;
+        dirlist = str.split(self.dirname, '/')
 
-        move = self.shell.current_directory.find_child(self.dirname)
+        move = self.recursive_cd(self.shell.current_directory, dirlist)
         if move is None:
             print('cd: ' + self.dirname + ': No such file or directory')
             return
 
         self.shell.current_directory = move
+
         return
+
+    def recursive_cd(self, current_directory, dirlist):
+        if len(dirlist) == 0:
+            return current_directory
+
+        move = current_directory.find_child(dirlist[0])
+        if move is None:
+            return move
+        else:
+            return self.recursive_cd(move, dirlist[1:])
 
 
 # Show the content of the current directory. No parameters
@@ -246,7 +259,6 @@ class Tree():
 
         return
 
-    # TODO: also print date and size for files
     def tree_print(self, directory, level):
         # tree_print iterates through each child.
         for child in directory.children:
