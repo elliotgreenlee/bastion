@@ -31,6 +31,11 @@ class Open():
         self.flag = flag
 
     def run(self):
+        existing_file = self.shell.current_directory.find_child(self.filename)
+        if isinstance(existing_file, Directory):
+            print('open: ' + self.filename + ': This is a directory')
+            return
+
         # If reading mode
         if self.flag == 'r':
             opened_file = self.shell.current_directory.find_child(self.filename)
@@ -183,13 +188,6 @@ class CD():
     def run(self):
         # TODO: get working with multiple ../../dirname in one go;
 
-        if self.dirname == '..':
-            if self.shell.current_directory.parent is None:  # Directory is root
-                return
-            else:
-                self.shell.current_directory = self.shell.current_directory.parent
-                return
-
         move = self.shell.current_directory.find_child(self.dirname)
         if move is None:
             print('cd: ' + self.dirname + ': No such file or directory')
@@ -208,7 +206,7 @@ class LS():
 
     def run(self):
         for child in self.shell.current_directory.children:
-            print child.name
+            print child[0]
         return
 
 

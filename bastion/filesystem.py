@@ -10,8 +10,10 @@ class FileSystem:
         self.exists = self.on_disk()
         self.total_size = 0
         self.fd = 0
-        self.children = []
         self.root = Directory(None, "/")
+        self.root.parent = self.root
+        self.root.children = []
+        self.root.add_child('..', self.root.parent)
 
     def initialize(self):
         """If the filesystem does not exist yet or we are
@@ -24,8 +26,10 @@ class FileSystem:
         self.exists = False
         self.total_size = 0
         self.fd = 0
-        self.children = []
         self.root = Directory(None, "/")
+        self.root.parent = self.root
+        self.root.children = []
+        self.root.add_child('..', self.root.parent)
 
         # Dump the filesystem to disk.
         pickle.dump(self, open(self.CONST_FILE_SYSTEM_NAME, "wb"))
@@ -35,17 +39,6 @@ class FileSystem:
             return True
         else:
             return False
-
-    def load_from_disk(self):
-        pickle_load = pickle.load(open(self.CONST_FILE_SYSTEM_NAME, "rb"))
-        print(dir(pickle_load))
-        self.total_size = pickle_load.total_size
-        self.children = pickle_load.children
-        self.root = pickle_load.root
-        self.exists = self.on_disk()
-
-    def add_child(self, child):
-        self.children.append(child)
 
     def get_new_fd(self):
         current_fd = self.fd
@@ -59,15 +52,15 @@ class Directory:
         self.name = name
         self.parent = parent
         self.children = []
-        self.add_child(parent, '..')
+        self.add_child('..', parent)
 
-    def add_child(self, child, name):
-        self.children.append(child)
+    def add_child(self, name, child):
+        self.children.append((name, child))
 
     def find_child(self, name):
         for child in self.children:
-            if name == child.name:
-                return child
+            if name == child[0]:
+                return child[1]
 
 
 class File:
