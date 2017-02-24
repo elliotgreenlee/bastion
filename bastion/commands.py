@@ -116,10 +116,10 @@ class MKDIR():
 
     def run(self):
         # Check if directory already exists
-        exists = False
         for child in self.shell.current_directory.children:
             if self.dirname == child.name:
-                exists = True
+                print('mkdir: ' + self.dirname + ': File exists')
+                return
 
         new_directory = Directory(self.shell.current_directory, self.dirname)  # create new directory
         self.shell.current_directory.add_child(new_directory)
@@ -162,6 +162,8 @@ class LS():
         self.file_system = self.shell.file_system
 
     def run(self):
+        for child in self.shell.current_directory.children:
+            print child.name
         return
 
 
