@@ -59,8 +59,9 @@ class Directory:
         self.name = name
         self.parent = parent
         self.children = []
+        self.add_child(parent, '..')
 
-    def add_child(self, child):
+    def add_child(self, child, name):
         self.children.append(child)
 
     def find_child(self, name):

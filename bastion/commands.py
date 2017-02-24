@@ -51,7 +51,7 @@ class Open():
             if existing_file is not None:
                 self.shell.current_directory.children.remove(existing_file)
 
-            self.shell.current_directory.add_child(new_file)
+            self.shell.current_directory.add_child(new_file, self.filename)
             print('Success, fd = ' + new_file.fd)
 
         return
@@ -144,7 +144,7 @@ class MKDIR():
             return
 
         new_directory = Directory(self.shell.current_directory, self.dirname)  # create new directory
-        self.shell.current_directory.add_child(new_directory)
+        self.shell.current_directory.add_child(new_directory, self.dirname)
         return
 
 
