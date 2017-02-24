@@ -43,10 +43,11 @@ class Open():
                 print('open: ' + self.filename + ': No such file')
                 return
             else:
+                self.file_system.open_files.append((existing_file.fd, 'r', existing_file))
                 print('Success, fd = ' + existing_file.fd)
 
         # If writing mode
-        if self.flag == 'w':
+        elif self.flag == 'w':
             # Create new file
             new_fd = self.file_system.get_new_fd()
             new_file = File(self.shell.current_directory, self.filename, new_fd)
@@ -56,7 +57,11 @@ class Open():
                 self.shell.current_directory.children.remove((self.filename, existing_file))
 
             self.shell.current_directory.add_child(self.filename, new_file)
+            self.file_system.open_files.append((new_file.fd, 'r', new_file))
             print('Success, fd = ' + str(new_file.fd))
+
+        else:
+            print('usage: open: ' + self.flag + ' is not a valid flag')
 
         return
 

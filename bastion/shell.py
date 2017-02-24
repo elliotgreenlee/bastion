@@ -121,12 +121,12 @@ class Shell(object):
 
             return Read(self, fd, size).run()
         elif cmd_str == 'write':
-            if number_of_arguments != 2:
-                print('usage: ' + cmd_str + ': 2 arguments')
+            if input_pieces[2][0] != '"' or input_pieces[-1][-1] != '"':
+                print('usage: ' + cmd_str + ': 2 arguments, and the string must begin and end with "')
                 return
 
             fd = input_pieces[1]
-            string = input_pieces[2]
+            string = input_pieces[2:]
 
             return Write(self, fd, string).run()
         elif cmd_str == 'seek':

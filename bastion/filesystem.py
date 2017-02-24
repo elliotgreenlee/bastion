@@ -11,6 +11,7 @@ class FileSystem:
         self.exists = self.on_disk()
         self.total_size = 0
         self.fd = 0
+        self.open_files = []
         self.root = Directory(None, "/")
         self.root.parent = self.root
         self.root.children = []
@@ -27,6 +28,7 @@ class FileSystem:
         self.exists = False
         self.total_size = 0
         self.fd = 0
+        self.open_files = []
         self.root = Directory(None, "/")
         self.root.parent = self.root
         self.root.children = []
