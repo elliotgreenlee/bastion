@@ -6,6 +6,7 @@ from datetime import datetime
 class FileSystem:
     CONST_FILE_SYSTEM_NAME = "file_system.p"
     open_files = []
+    free_space = {}
 
     def __init__(self):
         self.exists = self.on_disk()
@@ -53,6 +54,23 @@ class FileSystem:
             if str(fd) == str(file[0]):
                 return file[2]
 
+    def get_free_space(size):
+        """
+            Return where space starts, return None otherwise
+        """
+        pass
+
+    def write_to_disk(offset, content):
+        """
+            Write content (bytes) to offset, will always be enough room
+        """
+        pass
+
+    def free_space(offset, size):
+        """
+            Go to offset and delete up to size
+        """
+        pass
 
 class Directory:
     def __init__(self, parent, name):
