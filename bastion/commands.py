@@ -247,17 +247,20 @@ class Tree():
         for child in directory.children:
 
             # if file, print based on level
-            if isinstance(child, File):
+            if isinstance(child[1], File):
                 for i in range(0, level):
                     print('\t')
-                print child.name
+                print child[0]
 
             # if directory, print based on level, call tree_print(directory, level+1)
-            if isinstance(child, Directory):
+            if isinstance(child[1], Directory):
                 for i in range(0, level):
                     print('\t')
-                print child.name
-                self.tree_print(child, level+1)
+                print child[0]
+
+                # Don't recurse upwards
+                if child[0] != '..':
+                    self.tree_print(child[1], level+1)
 
 
 # Import a file from the host machine file system to
