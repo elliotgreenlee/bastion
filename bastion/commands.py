@@ -50,21 +50,7 @@ class MKFS(Command):
         super(MKFS, self).__init__(file_system, prompt_input)
 
     def run(self):
-        from bastion.shell import accept_input
-        if self.file_system.on_disk():
-            while True:
-                print("Are you sure you want to clear the old file system? (y/n)")
-                prompt_input = accept_input(validator=validate_yes_no)
-                if prompt_input is None:
-                    continue
-                if prompt_input in ['yes', 'y']:
-                    self.file_system.initialize()
-                    break
-                elif prompt_input in ['no', 'n']:
-                    print("Not overwriting filesystem.")
-                    break
-        else:
-            self.file_system.initialize()
+        self.file_system.initialize()
 
 
 # Open a file with the given <flag>, return a file
