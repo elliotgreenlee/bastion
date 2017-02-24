@@ -89,6 +89,7 @@ class Shell(object):
 
         cmd_str = input_pieces[0]
         # TODO: refactor the length of the input_pieces-1 as number_of_arguments
+        # TODO: parse arguments and determine type validity
 
         # Determine command
         if cmd_str == 'mkfs':
@@ -102,82 +103,80 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Open(self, args).run()
+            return Open(self, filename, flag).run()
         elif cmd_str == 'read':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Read(self, args).run()
+            return Read(self, fd, size).run()
         elif cmd_str == 'write':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Write(self, args).run()
+            return Write(self, fd, string).run()
         elif cmd_str == 'seek':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Seek(self, args).run()
+            return Seek(self, fd, offset).run()
         elif cmd_str == 'close':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Close(self, args).run()
+            return Close(self, fd).run()
         elif cmd_str == 'mkdir':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return MKDIR(self, args).run()
+            return MKDIR(self, dirname).run()
         elif cmd_str == 'rmdir':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return RMDIR(self, args).run()
+            return RMDIR(self, dirname).run()
         elif cmd_str == 'cd':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return CD(self, args).run()
+            return CD(self, dirname).run()
         elif cmd_str == 'ls':
             if len(input_pieces) != 1:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return LS().run()
+            return LS().run(self)
         elif cmd_str == 'cat':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return CAT(self, args).run()
+            return CAT(self, filename).run()
         elif cmd_str == 'tree':
             if len(input_pieces) != 1:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Tree().run()
+            return Tree(self).run()
         elif cmd_str == 'import':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Import(self, args).run()
+            return Import(self, srcname, destname).run()
         elif cmd_str == 'export':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Export(self, args).run()
+            return Export(self, srcname, destname).run()
         else:
             print("no")
             # TODO: Tell user to try again
 
-        # TODO: Call specific command init with arguments
-        # file_system, current_directory, and specific command arguments
