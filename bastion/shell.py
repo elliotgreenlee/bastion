@@ -64,7 +64,7 @@ class Shell(object):
             if text is None:
                 continue
             if text == 'mkfs':
-                MKFS(self.file_system, None).run()
+                MKFS(self).run()
                 break
 
         while True:
@@ -96,55 +96,55 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
-            return MKFS(*args).run
+            return MKFS(self).run
         elif cmd_str == 'open':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Open(*args).run()
+            return Open(self, args).run()
         elif cmd_str == 'read':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Read(*args).run()
+            return Read(self, args).run()
         elif cmd_str == 'write':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Write(*args).run()
+            return Write(self, args).run()
         elif cmd_str == 'seek':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Seek(*args).run()
+            return Seek(self, args).run()
         elif cmd_str == 'close':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Close(*args).run()
+            return Close(self, args).run()
         elif cmd_str == 'mkdir':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return MKDIR(*args).run()
+            return MKDIR(self, args).run()
         elif cmd_str == 'rmdir':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return RMDIR(*args).run()
+            return RMDIR(self, args).run()
         elif cmd_str == 'cd':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return CD(*args).run()
+            return CD(self, args).run()
         elif cmd_str == 'ls':
             if len(input_pieces) != 1:
                 print("no")  # TODO: tell user to try again
@@ -156,7 +156,7 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
-            return CAT(*args).run()
+            return CAT(self, args).run()
         elif cmd_str == 'tree':
             if len(input_pieces) != 1:
                 print("no")  # TODO: tell user to try again
@@ -168,13 +168,13 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Import(*args).run()
+            return Import(self, args).run()
         elif cmd_str == 'export':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
 
-            return Export(*args).run()
+            return Export(self, args).run()
         else:
             print("no")
             # TODO: Tell user to try again

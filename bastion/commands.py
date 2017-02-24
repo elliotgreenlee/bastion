@@ -2,21 +2,14 @@ from .filesystem import *
 from bastion.validators import validate_yes_no
 
 
-class Command(object):
-    def __init__(self, file_system, prompt_input, prompt_output=None):
-        self.file_system = file_system
-        self.prompt_input = prompt_input
-        self.prompt_output = prompt_output
-
-    def run(self):
-        pass
-
+# TODO: pass shell to every function, it has the file system
 
 # Make a new file system, i.e., format the disk so that it
 # is ready for other file system operations.
-class MKFS(Command):
-    def __init__(self, file_system, prompt_input):
-        super(MKFS, self).__init__(file_system, prompt_input)
+class MKFS():
+    def __init__(self, shell):
+        self.shell = shell
+        self.file_system = self.shell.file_system
 
     def run(self):
         self.file_system.initialize()
@@ -30,9 +23,8 @@ class MKFS(Command):
 # it will be created with a size of 0. This command should
 # print an integer as the fd of the file.
 # Example: open foo w shell returns SUCCESS, fd=5
-class Open(Command):
-    def __init__(self, file_system, args):
-        super(Open, self).__init__(file_system, *args)
+class Open():
+    def __init__(self, shell, args):
         filename = ""
         flag = ""
 
@@ -45,9 +37,8 @@ class Open(Command):
 # <size> bytes after read.
 # Example: read 5 10 shell returns the contents of the file
 # (assuming it has been written)
-class Read(Command):
-    def __init__(self, args):
-        super(Read, self).__init__(*args)
+class Read():
+    def __init__(self, shell, args):
         fd = ""
         size = ""
 
@@ -61,9 +52,8 @@ class Read(Command):
 # as a string. If the end of the file is reached, the size of the
 # file will be increased.
 # Example: write 5 "hello, world"
-class Write(Command):
-    def __init__(self, args):
-        super(Write, self).__init__(*args)
+class Write():
+    def __init__(self, shell, args):
         fd = ""
         string = ""
 
@@ -75,9 +65,8 @@ class Write(Command):
 # offset at <offset>. The <offset> means the number of bytes from
 # the beginning of the file.
 # Example: seek 5 10
-class Seek(Command):
-    def __init__(self, args):
-        super(Seek, self).__init__(*args)
+class Seek():
+    def __init__(self, shell, args):
         fd = ""
         offset = ""
 
@@ -87,9 +76,8 @@ class Seek(Command):
 
 # Close the file associated with <fd>.
 # Example: close 5
-class Close(Command):
-    def __init__(self, args):
-        super(Close, self).__init__(*args)
+class Close():
+    def __init__(self, shell, args):
         fd = ""
 
     def run(self):
@@ -98,9 +86,8 @@ class Close(Command):
 
 # Create a sub-directory <dirname> under the current directory.
 # Example: mkdir foo
-class MKDIR(Command):
-    def __init__(self, args):
-        super(MKDIR, self).__init__(*args)
+class MKDIR():
+    def __init__(self, shell, args):
         dirname = ""
 
     def run(self):
@@ -117,9 +104,8 @@ class MKDIR(Command):
 
 # Remove the sub-directory <dirname>.
 # Example: rmdir foo
-class RMDIR(Command):
-    def __init__(self, args):
-        super(RMDIR, self).__init__(*args)
+class RMDIR():
+    def __init__(self, shell, args):
         dirname = ""
 
     def run(self):
@@ -128,9 +114,8 @@ class RMDIR(Command):
 
 # Change the current directory to <dirname>.
 # Example: cd ../../foo/bar
-class CD(Command):
-    def __init__(self, args):
-        super(CD, self).__init__(*args)
+class CD():
+    def __init__(self, shell, args):
         dirname = ""
 
     def run(self):
@@ -139,20 +124,17 @@ class CD(Command):
 
 # Show the content of the current directory. No parameters
 # need to be supported.
-class LS(Command):
-    def __init__(self):
-        super(LS, self).__init__()
+class LS():
+    def __init__(self, shell):
 
     def run(self):
-        self.
         return
 
 
 # Show the content of the file.
 # Example: cat foo
-class CAT(Command):
-    def __init__(self, args):
-        super(CAT, self).__init__(*args)
+class CAT():
+    def __init__(self, shell, args):
         filename = ""
 
     def run(self):
@@ -165,9 +147,8 @@ class CAT(Command):
 # To understand this command better, you may refer
 # to this command output under the command line shell
 # in a Windows system.
-class Tree(Command):
-    def __init__(self):
-        super(Tree, self).__init__()
+class Tree():
+    def __init__(self, shell):
 
     def run(self):
         return
@@ -176,9 +157,8 @@ class Tree(Command):
 # Import a file from the host machine file system to
 # the current directory.
 # Example: import /d/foo.txt foo.txt
-class Import(Command):
-    def __init__(self, args):
-        super(Import, self).__init__(*args)
+class Import():
+    def __init__(self, shell, args):
         srcname = ""
         destname = ""
 
@@ -189,9 +169,8 @@ class Import(Command):
 # Export a file from the current directory to the host
 # machine file system.
 # Example: export foo.txt /d/foo.txt
-class Export(Command):
-    def __init__(self, args):
-        super(Export, self).__init__(*args)
+class Export():
+    def __init__(self, shell, args):
         srcname = ""
         destname = ""
 
