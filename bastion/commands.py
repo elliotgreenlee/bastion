@@ -116,10 +116,9 @@ class MKDIR():
 
     def run(self):
         # Check if directory already exists
-        for child in self.shell.current_directory.children:
-            if self.dirname == child.name:
-                print('mkdir: ' + self.dirname + ': File exists')
-                return
+        if self.shell.current_directory.find_child(self.dirname) is not None:
+            print('mkdir: ' + self.dirname + ': File exists')
+            return
 
         new_directory = Directory(self.shell.current_directory, self.dirname)  # create new directory
         self.shell.current_directory.add_child(new_directory)
@@ -151,6 +150,19 @@ class CD():
         self.dirname = dirname
 
     def run(self):
+        if self.dirname == '..':
+            if self.shell.current_directory.parent is None:  # Directory is root
+                return
+            else:
+                self.shell.current_directory = self.shell.current_directory.parent
+                return
+
+        move = self.shell.current_directory.find_child(self.dirname)
+        if move is None:
+            print('cd: ' + self.dirname + ': No such file or directory')
+            return
+
+        self.shell.current_directory = move
         return
 
 

@@ -54,6 +54,11 @@ class Directory:
 
     def add_child(self, child):
         self.children.append(child)
+        
+    def find_child(self, name):
+        for child in self.children:
+            if name == child.name:
+                return child
 
 
 class File:
