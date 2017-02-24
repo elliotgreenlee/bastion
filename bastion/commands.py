@@ -9,6 +9,28 @@ def call_command(cmd_str, args):
         return Open(*args).run()
     elif cmd_str == 'read':
         return Read(*args).run()
+    elif cmd_str == 'write':
+        return Write(*args).run()
+    elif cmd_str == 'seek':
+        return Seek(*args).run()
+    elif cmd_str == 'close':
+        return Close(*args).run()
+    elif cmd_str == 'mkdir':
+        return MKDIR(*args).run()
+    elif cmd_str == 'rmdir':
+        return RMDIR(*args).run()
+    elif cmd_str == 'cd':
+        return CD(*args).run()
+    elif cmd_str == 'ls':
+        return LS().run()
+    elif cmd_str == 'cat':
+        return CAT(*args).run()
+    elif cmd_str == 'tree':
+        return Tree().run()
+    elif cmd_str == 'import':
+        return Import(*args).run()
+    elif cmd_str == 'export':
+        return Export(*args).run()
 
 
 class Command(object):
@@ -55,7 +77,7 @@ class MKFS(Command):
 # Example: open foo w shell returns SUCCESS, fd=5
 class Open(Command):
     def __init__(self, args):
-        super().__init__(*args)
+        super(Open, self).__init__(*args)
         filename = ""
         flag = ""
 
@@ -70,7 +92,7 @@ class Open(Command):
 # (assuming it has been written)
 class Read(Command):
     def __init__(self, args):
-        super().__init__(*args)
+        super(Read, self).__init__(*args)
         fd = ""
         size = ""
 
@@ -85,8 +107,8 @@ class Read(Command):
 # file will be increased.
 # Example: write 5 "hello, world"
 class Write(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(Write, self).__init__(*args)
         fd = ""
         string = ""
 
@@ -99,8 +121,8 @@ class Write(Command):
 # the beginning of the file.
 # Example: seek 5 10
 class Seek(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(Seek, self).__init__(*args)
         fd = ""
         offset = ""
 
@@ -111,8 +133,8 @@ class Seek(Command):
 # Close the file associated with <fd>.
 # Example: close 5
 class Close(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(Close, self).__init__(*args)
         fd = ""
 
     def run(self):
@@ -122,8 +144,8 @@ class Close(Command):
 # Create a sub-directory <dirname> under the current directory.
 # Example: mkdir foo
 class MKDIR(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(MKDIR, self).__init__(*args)
         dirname = ""
 
     def run(self):
@@ -141,8 +163,8 @@ class MKDIR(Command):
 # Remove the sub-directory <dirname>.
 # Example: rmdir foo
 class RMDIR(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(RMDIR, self).__init__(*args)
         dirname = ""
 
     def run(self):
@@ -152,8 +174,8 @@ class RMDIR(Command):
 # Change the current directory to <dirname>.
 # Example: cd ../../foo/bar
 class CD(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(CD, self).__init__(*args)
         dirname = ""
 
     def run(self):
@@ -164,7 +186,7 @@ class CD(Command):
 # need to be supported.
 class LS(Command):
     def __init__(self):
-        Command.__init__()
+        super(LS, self).__init__()
 
     def run(self):
         return
@@ -173,8 +195,8 @@ class LS(Command):
 # Show the content of the file.
 # Example: cat foo
 class CAT(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(CAT, self).__init__(*args)
         filename = ""
 
     def run(self):
@@ -189,7 +211,7 @@ class CAT(Command):
 # in a Windows system.
 class Tree(Command):
     def __init__(self):
-        Command.__init__()
+        super(Tree, self).__init__()
 
     def run(self):
         return
@@ -199,8 +221,8 @@ class Tree(Command):
 # the current directory.
 # Example: import /d/foo.txt foo.txt
 class Import(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(Import, self).__init__(*args)
         srcname = ""
         destname = ""
 
@@ -212,8 +234,8 @@ class Import(Command):
 # machine file system.
 # Example: export foo.txt /d/foo.txt
 class Export(Command):
-    def __init__(self):
-        Command.__init__()
+    def __init__(self, args):
+        super(Export, self).__init__(*args)
         srcname = ""
         destname = ""
 
