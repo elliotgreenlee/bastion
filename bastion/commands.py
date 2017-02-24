@@ -31,6 +31,11 @@ class Open():
         self.flag = flag
 
     def run(self):
+        # if flag is r, check if it exists, error if not, return fd if yes
+        # if flag is w, create (overwrite if existing I think), return fd
+
+        # SUCCESS, fd=#
+        # FAILURE?? I guess
         return
 
 
@@ -158,6 +163,8 @@ class CD():
         self.dirname = dirname
 
     def run(self):
+        # TODO: get working with multiple ../../dirname in one go;
+
         if self.dirname == '..':
             if self.shell.current_directory.parent is None:  # Directory is root
                 return
@@ -218,6 +225,7 @@ class Tree():
         return
 
     # TODO: get tab prints to go on the same line
+    # TODO: also print date and size for files
     def tree_print(self, directory, level):
         # tree_print iterates through each child.
         for child in directory.children:
