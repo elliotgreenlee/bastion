@@ -9,28 +9,18 @@ from collections import defaultdict
 class FileSystemAllocation:
     """Was originally planning on using this to track "allocations" in memory,
     meaning files that span several blocks."""
-    def __init__(self):
-        self.blocks = []
-        self.total_size = 0
-
-
-class FileSystemBlock:
-    """Was originally planning on using this to track blocks, each 4096 byte
-    section."""
-    def __init__(self, block_num):
-        self.block_num = block_num
-        self.used = False
+    def __init__(self, offset, size):
+        self.offset = offset
+        self.size = size
 
 
 class FileSystem:
     CONST_FILE_SYSTEM_NAME = "file_system.bastion"
     TOTAL_BLOCKS = 250
     BLOCK_SIZE = 4096
-    open_files = []
 
     def __init__(self):
         self.exists = self.on_disk()
-        self.total_size = 20971520  # 20 megabytes allocated for overhead
         self.fd = 0
         self.open_files = []
         self.root = Directory(None, "/")
@@ -38,9 +28,7 @@ class FileSystem:
         self.root.children = []
         self.root.add_child('..', self.root.parent)
 
-        self.free_space = defaultdict()
-        for i in range(0, 250):
-            self.free_space[i] = FileSystemBlock(i)
+        self.free_list = [FileSystemAllocation(20971520, 83886080)]  # 20 MB in, size 80 MB
 
     def initialize(self):
         """If the filesystem does not exist yet or we are
@@ -51,13 +39,14 @@ class FileSystem:
 
         # Overwrite old values
         self.exists = False
-        self.total_size = 20971520  # 20 megabytes allocated for overhead
         self.fd = 0
         self.open_files = []
         self.root = Directory(None, "/")
         self.root.parent = self.root
         self.root.children = []
         self.root.add_child('..', self.root.parent)
+
+        self.free_list = [FileSystemAllocation(20971520, 83886080)]  # 20 MB in, size 80 MB
 
     def on_disk(self):
         if os.path.isfile(self.CONST_FILE_SYSTEM_NAME):
@@ -87,39 +76,48 @@ class FileSystem:
             Return offset where space starts, return None otherwise
         """
 
-        current_byte_size = os.path.getsize(self.CONST_FILE_SYSTEM_NAME)
+        # TODO: make sure this is correct
 
-        if current_byte_size >= self.total_size:
-            return None
+        # find size that works in free_list
+        chosen_space = None
+        for free_space in self.free_list:
+            if free_space.size >= size:
+                chosen_space = free_space
 
+        # if no size works, return -1 I guess? Or None?
+        if chosen_space is None:
+            return -1
+
+        chosen_offset = chosen_space.offset
+        chosen_size = chosen_space.size
+
+        # remove free_space from the free_list
+        self.free_list.remove(chosen_space)
+
+        # append the non needed part of the piece back to free_list
+        self.free_space(chosen_offset + size, chosen_size - size)
+
+        # return the required piece
+        return chosen_offset
+
+    def load_from_disk(self, offset, size):
+        # TODO: Make sure this is correct
+        # load file at offset of length size into temporary string content
         with open(self.CONST_FILE_SYSTEM_NAME, 'rwb') as f:
-            f.seek(current_byte_size)
+            f.seek(offset)
+            content = f.read(size)
 
-            current_byte_offset = f.tell()
-
-            # Not enough space
-            if self.total_size - current_byte_offset < size:
-                return None
-
-            return current_byte_offset
+        return content
 
     def write_to_disk(self, offset, content):
         """
             Write content (bytes) to offset, return None if not possible.
         """
 
-        current_byte_size = os.path.getsize(self.CONST_FILE_SYSTEM_NAME)
-
-        # Filesystem is full
-        if current_byte_size >= self.total_size:
-            return None
-
+        # TODO: Make sure this is correct (it should overwrite what is there)
+        # put content at offset
         with open(self.CONST_FILE_SYSTEM_NAME, 'rwb') as f:
             f.seek(offset)
-
-            if self.total_size - offset < len(content):
-                return None
-
             f.write(content)
 
     def free_space(self, offset, size):
@@ -127,10 +125,26 @@ class FileSystem:
             Go to offset and delete up to size
         """
 
-        with open(self.CONST_FILE_SYSTEM_NAME, 'rwb') as f:
-            f.seek(offset)
+        # TODO: Check to make sure these are right.
 
-            # File is now at offset, must delete that content somehow
+        # append (offset, size) to the free_list
+        self.free_list.append(FileSystemAllocation(offset, size))
+        combine = True
+        while combine:
+            combine = False
+            self.free_list.sort(key=lambda x: x[0])
+            # Iterate through each free_space in free_list
+            for i in range(1, len(self.free_list)):
+                free_space = self.free_list[i-1]
+                next_free_space = self.free_list[i]
+
+                if free_space.offset + free_space.size == next_free_space.offset:
+                    free_space.size += next_free_space.size
+                    # remove next_free_space from free_list
+                    self.free_list.remove(next_free_space)
+                    combine = True
+                    # break out of inner loop
+                    break
 
 
 class Directory:
