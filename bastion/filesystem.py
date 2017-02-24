@@ -1,5 +1,6 @@
 import pickle
 import os
+import sys
 from datetime import datetime
 
 
@@ -49,8 +50,15 @@ class FileSystem:
         return current_fd
 
     def get_open_file(self, fd):
+        print self.open_files
+        sys.stdout.flush()
         for file in self.open_files:
             if str(fd) == str(file[0]):
+                return file[2], file[1]
+
+    def find_open_file(self, name):
+        for file in self.open_files:
+            if name == file[2].name:
                 return file[2]
 
 

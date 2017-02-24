@@ -37,6 +37,10 @@ class Open():
             print('open: ' + self.filename + ': This is a directory')
             return
 
+        if self.file_system.find_open_file(self.filename) is not None:
+            print('open: ' + self.filename + ': This file is already open')
+            return
+
         # If reading mode
         if self.flag == 'r':
             if existing_file is None:
@@ -44,7 +48,7 @@ class Open():
                 return
             else:
                 self.file_system.open_files.append((existing_file.fd, 'r', existing_file))
-                print('Success, fd = ' + existing_file.fd)
+                print('Success, fd = ' + str(existing_file.fd))
 
         # If writing mode
         elif self.flag == 'w':
@@ -57,7 +61,7 @@ class Open():
                 self.shell.current_directory.children.remove((self.filename, existing_file))
 
             self.shell.current_directory.add_child(self.filename, new_file)
-            self.file_system.open_files.append((new_file.fd, 'r', new_file))
+            self.file_system.open_files.append((new_file.fd, 'w', new_file))
             print('Success, fd = ' + str(new_file.fd))
 
         else:
@@ -81,6 +85,18 @@ class Read():
         self.size = size
 
     def run(self):
+        # find file based on fd
+        open_file, mode = self.file_system.get_open_file(self.fd)
+        if open_file is None or mode != 'r':
+            print('read: ' + self.fd + ': that file is not open for reading')
+            return
+
+        if open_file.offset + self.size > open_file.size:
+            print('read: ' + self.fd + ': that file only has ' + open_file.size - open_file.offset + ' bytes left')
+            return
+
+        print(open_file.content[open_file.offset: open_file.offset + self.size])
+        open_file.offset += self.size
         return
 
 
@@ -101,13 +117,13 @@ class Write():
 
     def run(self):
         # find file based on fd
-        open_file = self.file_system.get_open_file(self.fd)
-        if open_file is None:
-            print('write: ' + self.fd + ': that file is not open')
+        open_file, mode = self.file_system.get_open_file(self.fd)
+        if open_file is None or mode != 'w':
+            print('write: ' + self.fd + ': that file is not open for writing')
             return
 
         if len(open_file.content) + len(self.string) > open_file.size:
-            open_file.size += 4096;
+            open_file.size += 4096
 
         new_content = open_file.content[0:open_file.offset] + self.string
         open_file.offset += len(self.string)
@@ -131,6 +147,17 @@ class Seek():
         self.offset = offset
 
     def run(self):
+        # find file based on fd
+        open_file, mode = self.file_system.get_open_file(self.fd)
+        if open_file is None:
+            print('seek: ' + self.fd + ': that file is not open')
+            return
+
+        if open_file.offset + self.offset > open_file.size:
+            print('seek: ' + self.fd + ': that file only has ' + open_file.size - open_file.offset + ' bytes left')
+            return
+
+        open_file.offset += self.offset
         return
 
 
@@ -145,6 +172,12 @@ class Close():
         self.fd = fd
 
     def run(self):
+        close_file, close_mode = self.file_system.get_open_file(self.fd)
+        if close_file is None:
+            print('close: ' + self.fd + ': that file is not open')
+            return
+
+        self.file_system.open_files.remove((self.fd, close_mode, close_file))
         return
 
 
