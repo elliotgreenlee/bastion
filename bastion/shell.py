@@ -59,15 +59,12 @@ class Shell(object):
         :return:
         """
         while True:
-            if not self.file_system.on_disk():
-                print("Type mkfs to create a new file system.")
-                text = accept_input(validator=validate_mkfs)
-                if text is None:
-                    continue
-                if text == 'mkfs':
-                    MKFS(self.file_system, None).run()
-            else:
-                self.file_system.load_from_disk()
+            print("Type mkfs to create a new file system.")
+            text = accept_input(validator=validate_mkfs)
+            if text is None:
+                continue
+            if text == 'mkfs':
+                MKFS(self.file_system, None).run()
                 break
 
         while True:

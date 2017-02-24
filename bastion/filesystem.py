@@ -16,10 +16,8 @@ class FileSystem:
         """If the filesystem does not exist yet or we are
         overwriting the existing filesystem, run this function."""
 
-        try:
+        if self.on_disk():
             os.remove(self.CONST_FILE_SYSTEM_NAME)
-        except IOError:
-            pass
 
         # Overwrite old values
         self.exists = False
