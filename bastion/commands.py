@@ -25,6 +25,8 @@ class MKFS():
 # Example: open foo w shell returns SUCCESS, fd=5
 class Open():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         filename = ""
         flag = ""
 
@@ -39,6 +41,8 @@ class Open():
 # (assuming it has been written)
 class Read():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         fd = ""
         size = ""
 
@@ -54,6 +58,8 @@ class Read():
 # Example: write 5 "hello, world"
 class Write():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         fd = ""
         string = ""
 
@@ -67,6 +73,8 @@ class Write():
 # Example: seek 5 10
 class Seek():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         fd = ""
         offset = ""
 
@@ -78,6 +86,8 @@ class Seek():
 # Example: close 5
 class Close():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         fd = ""
 
     def run(self):
@@ -88,6 +98,9 @@ class Close():
 # Example: mkdir foo
 class MKDIR():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
+
         dirname = ""
 
     def run(self):
@@ -106,6 +119,8 @@ class MKDIR():
 # Example: rmdir foo
 class RMDIR():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         dirname = ""
 
     def run(self):
@@ -116,6 +131,8 @@ class RMDIR():
 # Example: cd ../../foo/bar
 class CD():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         dirname = ""
 
     def run(self):
@@ -126,6 +143,8 @@ class CD():
 # need to be supported.
 class LS():
     def __init__(self, shell):
+        self.shell = shell
+        self.file_system = self.shell.file_system
 
     def run(self):
         return
@@ -135,6 +154,8 @@ class LS():
 # Example: cat foo
 class CAT():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         filename = ""
 
     def run(self):
@@ -149,6 +170,8 @@ class CAT():
 # in a Windows system.
 class Tree():
     def __init__(self, shell):
+        self.shell = shell
+        self.file_system = self.shell.file_system
 
     def run(self):
         return
@@ -159,6 +182,8 @@ class Tree():
 # Example: import /d/foo.txt foo.txt
 class Import():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         srcname = ""
         destname = ""
 
@@ -171,6 +196,8 @@ class Import():
 # Example: export foo.txt /d/foo.txt
 class Export():
     def __init__(self, shell, args):
+        self.shell = shell
+        self.file_system = self.shell.file_system
         srcname = ""
         destname = ""
 
