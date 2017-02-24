@@ -1,5 +1,6 @@
 from .filesystem import *
 from bastion.validators import validate_yes_no
+from datetime import datetime
 
 
 # Make a new file system, i.e., format the disk so that it
@@ -38,12 +39,11 @@ class Open():
 
         # If reading mode
         if self.flag == 'r':
-            opened_file = self.shell.current_directory.find_child(self.filename)
-            if opened_file is None:
+            if existing_file is None:
                 print('open: ' + self.filename + ': No such file')
                 return
             else:
-                print('Success, fd = ' + opened_file.fd)
+                print('Success, fd = ' + existing_file.fd)
 
         # If writing mode
         if self.flag == 'w':
@@ -52,12 +52,11 @@ class Open():
             new_file = File(self.shell.current_directory, self.filename, new_fd)
 
             # Remove existing file of same name if it exists
-            existing_file = self.shell.current_directory.find_child(self.filename)
             if existing_file is not None:
-                self.shell.current_directory.children.remove(existing_file)
+                self.shell.current_directory.children.remove((self.filename, existing_file))
 
-            self.shell.current_directory.add_child(new_file, self.filename)
-            print('Success, fd = ' + new_file.fd)
+            self.shell.current_directory.add_child(self.filename, new_file)
+            print('Success, fd = ' + str(new_file.fd))
 
         return
 
@@ -141,15 +140,13 @@ class MKDIR():
         self.dirname = dirname
 
     def run(self):
-        # TODO: check name for '..' and say "mkdir: ..: File exists"
-
         # Check if directory already exists
         if self.shell.current_directory.find_child(self.dirname) is not None:
             print('mkdir: ' + self.dirname + ': File exists')
             return
 
         new_directory = Directory(self.shell.current_directory, self.dirname)  # create new directory
-        self.shell.current_directory.add_child(new_directory, self.dirname)
+        self.shell.current_directory.add_child(self.dirname, new_directory)
         return
 
 
@@ -164,14 +161,18 @@ class RMDIR():
         self.dirname = dirname
 
     def run(self):
-        # TODO: check name for '..' and say "rmdir: ..: Directory not empty"
 
         deletion = self.shell.current_directory.find_child(self.dirname)
         if deletion is None:
             print('rmdir: ' + self.dirname + ': No such file or directory')
             return
 
-        self.shell.current_directory.children.remove(deletion)
+        # Check if trying to remove parent
+        if self.dirname == '..':
+            print('rmdir: ' + self.dirname + ': Cannot remove that directory')
+            return
+
+        self.shell.current_directory.children.remove((self.dirname, deletion))
         return
 
 
@@ -240,7 +241,6 @@ class Tree():
 
         return
 
-    # TODO: get tab prints to go on the same line
     # TODO: also print date and size for files
     def tree_print(self, directory, level):
         # tree_print iterates through each child.
@@ -249,13 +249,13 @@ class Tree():
             # if file, print based on level
             if isinstance(child[1], File):
                 for i in range(0, level):
-                    print('\t')
-                print child[0]
+                    print '\t',
+                print child[0], child[1].size, child[1].date
 
             # if directory, print based on level, call tree_print(directory, level+1)
             if isinstance(child[1], Directory):
                 for i in range(0, level):
-                    print('\t')
+                    print '\t',
                 print child[0]
 
                 # Don't recurse upwards

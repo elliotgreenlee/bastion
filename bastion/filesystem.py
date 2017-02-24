@@ -1,5 +1,6 @@
 import pickle
 import os
+from datetime import datetime
 
 
 class FileSystem:
@@ -71,3 +72,4 @@ class File:
         self.size = 0
         self.content = b''
         self.offset = 0
+        self.date = str(datetime.now())
