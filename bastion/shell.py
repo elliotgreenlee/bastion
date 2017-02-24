@@ -103,11 +103,17 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
+            filename = input_pieces[1]
+            flag = input_pieces[2]
+
             return Open(self, filename, flag).run()
         elif cmd_str == 'read':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
+
+            fd = input_pieces[1]
+            size = input_pieces[2]
 
             return Read(self, fd, size).run()
         elif cmd_str == 'write':
@@ -115,11 +121,17 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
+            fd = input_pieces[1]
+            string = input_pieces[2]
+
             return Write(self, fd, string).run()
         elif cmd_str == 'seek':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
+
+            fd = input_pieces[1]
+            offset = input_pieces[2]
 
             return Seek(self, fd, offset).run()
         elif cmd_str == 'close':
@@ -127,11 +139,15 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
+            fd = input_pieces[1]
+
             return Close(self, fd).run()
         elif cmd_str == 'mkdir':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
+
+            dirname = input_pieces[1]
 
             return MKDIR(self, dirname).run()
         elif cmd_str == 'rmdir':
@@ -139,11 +155,15 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
+            dirname = input_pieces[1]
+
             return RMDIR(self, dirname).run()
         elif cmd_str == 'cd':
             if len(input_pieces) != 2:
                 print("no")  # TODO: tell user to try again
                 return
+
+            dirname = input_pieces[1]
 
             return CD(self, dirname).run()
         elif cmd_str == 'ls':
@@ -157,6 +177,8 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
+            filename = input_pieces[1]
+
             return CAT(self, filename).run()
         elif cmd_str == 'tree':
             if len(input_pieces) != 1:
@@ -169,11 +191,17 @@ class Shell(object):
                 print("no")  # TODO: tell user to try again
                 return
 
+            srcname = input_pieces[1]
+            destname = input_pieces[2]
+
             return Import(self, srcname, destname).run()
         elif cmd_str == 'export':
             if len(input_pieces) != 3:
                 print("no")  # TODO: tell user to try again
                 return
+
+            srcname = input_pieces[1]
+            destname = input_pieces[2]
 
             return Export(self, srcname, destname).run()
         else:

@@ -24,11 +24,13 @@ class MKFS():
 # print an integer as the fd of the file.
 # Example: open foo w shell returns SUCCESS, fd=5
 class Open():
-    def __init__(self, shell, args):
+    def __init__(self, shell, filename, flag):
         self.shell = shell
         self.file_system = self.shell.file_system
-        filename = ""
-        flag = ""
+
+        # Arguments
+        self.filename = filename
+        self.flag = flag
 
     def run(self):
         return
@@ -40,11 +42,13 @@ class Open():
 # Example: read 5 10 shell returns the contents of the file
 # (assuming it has been written)
 class Read():
-    def __init__(self, shell, args):
+    def __init__(self, shell, fd, size):
         self.shell = shell
         self.file_system = self.shell.file_system
-        fd = ""
-        size = ""
+
+        # Arguments
+        self.fd = fd
+        self.size = size
 
     def run(self):
         return
@@ -57,11 +61,13 @@ class Read():
 # file will be increased.
 # Example: write 5 "hello, world"
 class Write():
-    def __init__(self, shell, args):
+    def __init__(self, shell, fd, string):
         self.shell = shell
         self.file_system = self.shell.file_system
-        fd = ""
-        string = ""
+
+        # Arguments
+        self.fd = fd
+        self.string = string
 
     def run(self):
         return
@@ -72,11 +78,13 @@ class Write():
 # the beginning of the file.
 # Example: seek 5 10
 class Seek():
-    def __init__(self, shell, args):
+    def __init__(self, shell, fd, offset):
         self.shell = shell
         self.file_system = self.shell.file_system
-        fd = ""
-        offset = ""
+
+        # Arguments
+        self.fd = fd
+        self.offset = offset
 
     def run(self):
         return
@@ -85,10 +93,12 @@ class Seek():
 # Close the file associated with <fd>.
 # Example: close 5
 class Close():
-    def __init__(self, shell, args):
+    def __init__(self, shell, fd):
         self.shell = shell
         self.file_system = self.shell.file_system
-        fd = ""
+
+        # Arguments
+        self.fd = fd
 
     def run(self):
         return
@@ -97,31 +107,34 @@ class Close():
 # Create a sub-directory <dirname> under the current directory.
 # Example: mkdir foo
 class MKDIR():
-    def __init__(self, shell, args):
+    def __init__(self, shell, dirname):
         self.shell = shell
         self.file_system = self.shell.file_system
 
-        dirname = ""
+        # Arguments
+        self.dirname = dirname
 
     def run(self):
         # Check if directory already exists
         exists = False
-        for child in self.current_directory.children:
+        for child in self.shell.current_directory.children:
             if self.dirname == child.name:
                 exists = True
 
-        new_directory = Directory(self.current_directory, self.dirname)  # create new directory
-        self.current_directory.add_child(new_directory)
+        new_directory = Directory(self.shell.current_directory, self.dirname)  # create new directory
+        self.shell.current_directory.add_child(new_directory)
         return
 
 
 # Remove the sub-directory <dirname>.
 # Example: rmdir foo
 class RMDIR():
-    def __init__(self, shell, args):
+    def __init__(self, shell, dirname):
         self.shell = shell
         self.file_system = self.shell.file_system
-        dirname = ""
+
+        # Arguments
+        self.dirname = dirname
 
     def run(self):
         return
@@ -130,10 +143,12 @@ class RMDIR():
 # Change the current directory to <dirname>.
 # Example: cd ../../foo/bar
 class CD():
-    def __init__(self, shell, args):
+    def __init__(self, shell, dirname):
         self.shell = shell
         self.file_system = self.shell.file_system
-        dirname = ""
+
+        # Arguments
+        self.dirname = dirname
 
     def run(self):
         return
@@ -153,10 +168,12 @@ class LS():
 # Show the content of the file.
 # Example: cat foo
 class CAT():
-    def __init__(self, shell, args):
+    def __init__(self, shell, filename):
         self.shell = shell
         self.file_system = self.shell.file_system
-        filename = ""
+
+        # Arguments
+        self.filename = filename
 
     def run(self):
         return
@@ -181,11 +198,13 @@ class Tree():
 # the current directory.
 # Example: import /d/foo.txt foo.txt
 class Import():
-    def __init__(self, shell, args):
+    def __init__(self, shell, srcname, destname):
         self.shell = shell
         self.file_system = self.shell.file_system
-        srcname = ""
-        destname = ""
+
+        # Arguments
+        self.srcname = srcname
+        self.destname = destname
 
     def run(self):
         return
@@ -195,11 +214,12 @@ class Import():
 # machine file system.
 # Example: export foo.txt /d/foo.txt
 class Export():
-    def __init__(self, shell, args):
+    def __init__(self, shell, srcname, destname):
         self.shell = shell
         self.file_system = self.shell.file_system
-        srcname = ""
-        destname = ""
+
+        self.srcname = srcname
+        self.destname = destname
 
     def run(self):
         return
