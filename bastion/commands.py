@@ -193,7 +193,8 @@ class MKDIR():
 
     def run(self):
         # Check if directory already exists
-        if self.shell.current_directory.find_child(self.dirname) is not None:
+        existing = self.shell.current_directory.find_child(self.dirname)
+        if existing is not None:
             print('mkdir: ' + self.dirname + ': File exists')
             return
 
@@ -258,7 +259,7 @@ class CD():
         if move is None or not isinstance(move.child, Directory):
             return None
         else:
-            return self.recursive_cd(move, dirlist[1:])
+            return self.recursive_cd(move.child, dirlist[1:])
 
 
 # Show the content of the current directory. No parameters
