@@ -27,7 +27,7 @@ def accept_input(validator=None):
                 return None
 
     except KeyboardInterrupt:
-        print("Exitting!")
+        print("Exiting!")
         sys.exit(0)
     return text
 

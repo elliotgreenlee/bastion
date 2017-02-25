@@ -79,7 +79,7 @@ class Open():
 # <size> bytes after read.
 # Example: read 5 10 shell returns the contents of the file
 # (assuming it has been written)
-class Read():
+class Read():  # TODO:
     def __init__(self, shell, fd, size):
         self.shell = shell
         self.file_system = self.shell.file_system
@@ -164,7 +164,7 @@ class Write():
 # offset at <offset>. The <offset> means the number of bytes from
 # the beginning of the file.
 # Example: seek 5 10
-class Seek():
+class Seek():  # TODO:
     def __init__(self, shell, fd, offset):
         self.shell = shell
         self.file_system = self.shell.file_system
@@ -174,17 +174,18 @@ class Seek():
         self.offset = offset
 
     def run(self):
+        self.offset = int(self.offset)
         # find file based on fd
         open_file = self.file_system.find_open_fd(self.fd)
         if open_file is None:
             print('seek: ' + self.fd + ': that file is not open')
             return
 
-        if open_file.file.offset + self.offset > open_file.file.size:
-            print('seek: ' + self.fd + ': that file only has ' + str(open_file.file.size - open_file.file.offset) + ' bytes left')
+        if open_file.file.content_size < self.offset:
+            print('seek: ' + self.fd + ': that file only has ' + str(open_file.file.content_size) + ' bytes')
             return
 
-        open_file.file.offset += self.offset
+        open_file.file.offset = self.offset
         return
 
 
@@ -366,7 +367,7 @@ class Tree():
 # Import a file from the host machine file system to
 # the current directory.
 # Example: import /d/foo.txt foo.txt
-class Import():
+class Import():  # TODO:
     def __init__(self, shell, srcname, destname):
         self.shell = shell
         self.file_system = self.shell.file_system
@@ -382,7 +383,7 @@ class Import():
 # Export a file from the current directory to the host
 # machine file system.
 # Example: export foo.txt /d/foo.txt
-class Export():
+class Export():  # TODO:
     def __init__(self, shell, srcname, destname):
         self.shell = shell
         self.file_system = self.shell.file_system
