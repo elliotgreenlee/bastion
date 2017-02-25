@@ -18,6 +18,7 @@ class FileSystem:
     def __init__(self):
         self.exists = self.on_disk()
         self.fd = 0
+        self.available_fds = []
         self.open_files = []
         self.root = Directory(None, "/")
         self.root.parent = self.root
@@ -38,6 +39,7 @@ class FileSystem:
         # Overwrite old values
         self.exists = False
         self.fd = 0
+        self.available_fds = []
         self.open_files = []
         self.root = Directory(None, "/")
         self.root.parent = self.root
@@ -53,8 +55,12 @@ class FileSystem:
             return False
 
     def get_new_fd(self):
-        current_fd = self.fd
-        self.fd += 1
+        if len(self.available_fds) == 0:
+            current_fd = self.fd
+            self.fd += 1
+        else:
+            current_fd = self.available_fds[0]
+            self.available_fds.remove(self.available_fds[0])
         return current_fd
 
     def find_open_fd(self, fd):
@@ -82,6 +88,7 @@ class FileSystem:
         for free_space in self.free_list:
             if free_space.size >= size:
                 chosen_space = free_space
+                break
 
         # if no size works, return -1
         if chosen_space is None:
@@ -103,7 +110,6 @@ class FileSystem:
         # TODO: Make sure this is correct
         # load file at offset of length size into temporary string content
         with open(self.CONST_FILE_SYSTEM_NAME, 'r+') as f:
-            print 'load_from_disk', offset, size
             f.seek(offset)
             content = f.read(size)
             f.close()
@@ -118,7 +124,6 @@ class FileSystem:
         # TODO: Make sure this is correct (it should overwrite what is there)
         # put content at offset
         with open(self.CONST_FILE_SYSTEM_NAME, 'r+') as f:
-            print 'write_to_disk', offset, content
             f.seek(offset)
             f.write(content)
             f.close()
