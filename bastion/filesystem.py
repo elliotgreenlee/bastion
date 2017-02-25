@@ -20,15 +20,7 @@ class FileSystem:
     BLOCK_SIZE = 4096
 
     def __init__(self):
-        self.exists = self.on_disk()
-        self.fd = 0
-        self.open_files = []
-        self.root = Directory(None, "/")
-        self.root.parent = self.root
-        self.root.children = []
-        self.root.add_child('..', self.root.parent)
-
-        self.free_list = [FileSystemAllocation(20971520, 83886080)]  # 20 MB in, size 80 MB
+        self.initialize()
 
     def initialize(self):
         """If the filesystem does not exist yet or we are
