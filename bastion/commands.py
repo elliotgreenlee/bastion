@@ -270,7 +270,7 @@ class LS():
 
     def run(self):
         for child in self.shell.current_directory.children:
-            print child[0]
+            print child.name
         return
 
 
@@ -317,20 +317,20 @@ class Tree():
         for child in directory.children:
 
             # if file, print based on level
-            if isinstance(child[1], File):
+            if isinstance(child.child, File):
                 for i in range(0, level):
                     print '\t',
-                print child[0], child[1].size, child[1].date
+                print child.name, child.child.size, child.child.date
 
             # if directory, print based on level, call tree_print(directory, level+1)
-            if isinstance(child[1], Directory):
+            if isinstance(child.child, Directory):
                 for i in range(0, level):
                     print '\t',
-                print child[0]
+                print child.name
 
                 # Don't recurse upwards
-                if child[0] != '..':
-                    self.tree_print(child[1], level+1)
+                if child.name != '..':
+                    self.tree_print(child.child, level+1)
 
 
 # Import a file from the host machine file system to
