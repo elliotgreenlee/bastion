@@ -321,7 +321,8 @@ class CAT():
             print('cat: ' + self.filename + ': Not a file')
             return
 
-        print self.file_system.load_from_disk(catted.child.fsa.offset, catted.child.content_size)
+        print self.file_system.load_from_disk(catted.child.fsa.offset, catted.child.content_size).replace('\\n', '\n').replace('\\t', '\t')
+
         return
 
 
