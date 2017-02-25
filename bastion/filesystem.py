@@ -24,7 +24,7 @@ class FileSystem:
         self.root.children = []
         self.root.add_child(Child('..', self.root.parent))
 
-        self.free_list = [FileSystemAllocation(20971520, 83886080)]  # 20 MB in, size 80 MB
+        self.free_list = [FileSystemAllocation(0, 83886080)]  # 20 MB in, size 80 MB
 
     def initialize(self):
         """If the filesystem does not exist yet or we are
@@ -32,6 +32,8 @@ class FileSystem:
 
         if self.on_disk():
             os.remove(self.CONST_FILE_SYSTEM_NAME)
+
+        open(self.CONST_FILE_SYSTEM_NAME, 'a')
 
         # Overwrite old values
         self.exists = False
@@ -42,7 +44,7 @@ class FileSystem:
         self.root.children = []
         self.root.add_child(Child('..', self.root.parent))
 
-        self.free_list = [FileSystemAllocation(20971520, 83886080)]  # 20 MB in, size 80 MB
+        self.free_list = [FileSystemAllocation(0, 83886080)]  # 20 MB in, size 80 MB
 
     def on_disk(self):
         if os.path.isfile(self.CONST_FILE_SYSTEM_NAME):
@@ -100,9 +102,11 @@ class FileSystem:
     def load_from_disk(self, offset, size):
         # TODO: Make sure this is correct
         # load file at offset of length size into temporary string content
-        with open(self.CONST_FILE_SYSTEM_NAME, 'rwb') as f:
+        with open(self.CONST_FILE_SYSTEM_NAME, 'r+') as f:
+            print 'load_from_disk', offset, size
             f.seek(offset)
             content = f.read(size)
+            f.close()
 
         return content
 
@@ -113,9 +117,11 @@ class FileSystem:
 
         # TODO: Make sure this is correct (it should overwrite what is there)
         # put content at offset
-        with open(self.CONST_FILE_SYSTEM_NAME, 'rwb') as f:
+        with open(self.CONST_FILE_SYSTEM_NAME, 'r+') as f:
+            print 'write_to_disk', offset, content
             f.seek(offset)
             f.write(content)
+            f.close()
 
     def free_space(self, offset, size):
         """
@@ -129,7 +135,7 @@ class FileSystem:
         combine = True
         while combine:
             combine = False
-            self.free_list.sort(key=lambda x: x[0])
+            self.free_list.sort(key=lambda x: x.offset)
             # Iterate through each free_space in free_list
             for i in range(1, len(self.free_list)):
                 free_space = self.free_list[i-1]

@@ -52,6 +52,7 @@ class Open():
         elif self.flag == 'w':
             # Get disk space
             offset = self.file_system.get_free_space(4096)
+            print 'open', offset
             if offset == -1:
                 print('open: There is not enough space on disk for a new file')
                 return
@@ -138,6 +139,7 @@ class Write():
 
         # get more space
         new_offset = self.file_system.get_free_space(open_file.file.fsa.size)
+        print 'write', new_offset
 
         # if not enough space, write back original to disk and error
         if new_offset == -1:
@@ -152,6 +154,8 @@ class Write():
         new_content = old_content[0:open_file.file.offset] + self.string + old_content[open_file.file.offset:]
         open_file.file.offset += len(self.string)
         open_file.file.date = str(datetime.now())
+        open_file.file.content_size += len(self.string)
+        open_file.file.fsa.offset = new_offset
 
         # write to disk
         self.file_system.write_to_disk(new_offset, new_content)
@@ -318,7 +322,9 @@ class CAT():
             print('cat: ' + self.filename + ': Not a file')
             return
 
-        print self.file_system.load_from_disk(catted.child.fsa.offset, catted.child.fsa.size)
+        print 'cat', catted.child.fsa.offset, catted.child.content_size
+
+        print self.file_system.load_from_disk(catted.child.fsa.offset, catted.child.content_size)
         return
 
 
