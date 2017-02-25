@@ -1,6 +1,4 @@
 from .filesystem import *
-from bastion.validators import validate_yes_no
-from datetime import datetime
 
 
 # Make a new file system, i.e., format the disk so that it
@@ -33,11 +31,11 @@ class Open():
 
     def run(self):
         existing = self.shell.current_directory.find_child(self.filename)
-        if isinstance(existing, Directory):
+        if existing is not None and isinstance(existing.child, Directory):
             print('open: ' + self.filename + ': This is a directory')
             return
 
-        if self.file_system.find_open_file(self.filename) is not None:
+        if self.file_system.find_open_name(self.filename) is not None:
             print('open: ' + self.filename + ': This file is already open')
             return
 
@@ -47,21 +45,27 @@ class Open():
                 print('open: ' + self.filename + ': No such file')
                 return
             else:
-                self.file_system.open_files.append((existing.child.fd, 'r', existing))
+                self.file_system.add_open_file(OpenFile(existing.child.fd, 'r', existing))
                 print('Success, fd = ' + str(existing.child.fd))
 
         # If writing mode
         elif self.flag == 'w':
+            # Get disk space
+            offset = self.file_system.get_free_space(4096)
+            if offset == -1:
+                print('open: There is not enough space on disk for a new file')
+                return
+
             # Create new file
             new_fd = self.file_system.get_new_fd()
-            new_file = File(self.shell.current_directory, self.filename, new_fd)
+            new_file = File(self.shell.current_directory, self.filename, new_fd, offset)
 
             # Remove existing file of same name if it exists
             if existing is not None:
-                self.shell.current_directory.children.remove((self.filename, existing))
+                self.shell.current_directory.children.remove(existing)
 
             self.shell.current_directory.add_child(Child(self.filename, new_file))
-            self.file_system.open_files.append((new_file.fd, 'w', new_file))
+            self.file_system.add_open_file(OpenFile(new_file.fd, 'w', new_file))
             print('Success, fd = ' + str(new_file.fd))
 
         else:
@@ -321,7 +325,7 @@ class Tree():
             if isinstance(child.child, File):
                 for i in range(0, level):
                     print '\t',
-                print child.name, child.child.size, child.child.date
+                print child.name, child.child.fsa.size, child.child.date
 
             # if directory, print based on level, call tree_print(directory, level+1)
             if isinstance(child.child, Directory):

@@ -1,9 +1,5 @@
-import pickle
 import os
-import sys
-import uuid
 from datetime import datetime
-from collections import defaultdict
 
 
 class FileSystemAllocation:
@@ -96,7 +92,7 @@ class FileSystem:
         self.free_list.remove(chosen_space)
 
         # append the non needed part of the piece back to free_list
-        self.free_space(chosen_offset + size, chosen_size - size)
+        self.free_list.append(FileSystemAllocation(chosen_offset + size, chosen_size - size))
 
         # return the required piece
         return chosen_offset
