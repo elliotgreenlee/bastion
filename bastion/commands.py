@@ -121,19 +121,40 @@ class Write():
 
     def run(self):
         # find file based on fd
-        open_file = self.file_system.get_open_fd(self.fd)
+        open_file = self.file_system.find_open_fd(self.fd)
         if open_file is None or open_file.mode != 'w':
             print('write: ' + self.fd + ': that file is not open for writing')
             return
 
-        if len(open_file.file.content) + len(self.string) > open_file.file.size:
-            open_file.file.size += 4096
+        # load content from disk
+        old_content = self.file_system.load_from_disk(open_file.file.fsa.offset, open_file.file.content_size)
 
-        new_content = open_file.file.content[0:open_file.file.offset] + self.string
+        # free space where file used to be
+        self.file_system.free_space(open_file.file.fsa.offset, open_file.file.fsa.size)
+
+        # determine if more space is needed
+        if open_file.file.content_size + len(self.string) > open_file.file.fsa.size:
+            open_file.file.fsa.size += 4096
+
+        # get more space
+        new_offset = self.file_system.get_free_space(open_file.file.fsa.size)
+
+        # if not enough space, write back original to disk and error
+        if new_offset == -1:
+            new_offset = self.file_system.get_free_space(len(old_content))
+            if new_offset == -1:
+                print('Error: File system corrupted')
+            self.file_system.write_to_disk(new_offset, old_content)
+            print('write: ' + self.fd + ': The file system does not have enough space for that write')
+            return
+
+        # Modify content (overwrite)
+        new_content = old_content[0:open_file.file.offset] + self.string + old_content[open_file.file.offset:]
         open_file.file.offset += len(self.string)
-        new_content += open_file.file.content[open_file.file.offset:]
-        open_file.file.content = new_content
+        open_file.file.date = str(datetime.now())
 
+        # write to disk
+        self.file_system.write_to_disk(new_offset, new_content)
         return
 
 
@@ -152,7 +173,7 @@ class Seek():
 
     def run(self):
         # find file based on fd
-        open_file = self.file_system.get_open_fd(self.fd)
+        open_file = self.file_system.find_open_fd(self.fd)
         if open_file is None:
             print('seek: ' + self.fd + ': that file is not open')
             return
@@ -176,7 +197,7 @@ class Close():
         self.fd = fd
 
     def run(self):
-        close_file = self.file_system.get_open_fd(self.fd)
+        close_file = self.file_system.find_open_fd(self.fd)
         if close_file is None:
             print('close: ' + self.fd + ': that file is not open')
             return
@@ -230,6 +251,7 @@ class RMDIR():
             return
 
         self.shell.current_directory.children.remove(deletion)
+        # TODO: recursively remove subdirectories and delete and free files?
         return
 
 
@@ -296,8 +318,7 @@ class CAT():
             print('cat: ' + self.filename + ': Not a file')
             return
 
-        print catted.child.content
-        # TODO: print self.file_system.load_from_disk(catted.child.fsa.offset, catted.child.fsa.size)
+        print self.file_system.load_from_disk(catted.child.fsa.offset, catted.child.fsa.size)
         return
 
 

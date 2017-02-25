@@ -178,7 +178,7 @@ class File:
         self.name = name
         self.parent = parent
         self.fd = fd
-        self.content = ''
+        self.content_size = 0
         self.offset = 0
         self.date = str(datetime.now())
 
