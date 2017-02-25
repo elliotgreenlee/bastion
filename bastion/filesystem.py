@@ -84,7 +84,7 @@ class FileSystem:
             if free_space.size >= size:
                 chosen_space = free_space
 
-        # if no size works, return -1 I guess? Or None?
+        # if no size works, return -1
         if chosen_space is None:
             return -1
 
@@ -152,23 +152,30 @@ class Directory:
         self.name = name
         self.parent = parent
         self.children = []
-        self.add_child('..', parent)
+        self.add_child(Child('..', parent))
 
-    def add_child(self, name, child):
-        self.children.append((name, child))
+    def add_child(self, child):
+        self.children.append(child)
 
     def find_child(self, name):
         for child in self.children:
-            if name == child[0]:
-                return child[1]
+            if name == child.name:
+                return child
+
+
+class Child:
+    def __init__(self, name, child):
+        self.name = name
+        self.child = child
 
 
 class File:
-    def __init__(self, parent, name, fd):
+    def __init__(self, parent, name, fd, offset):
         self.name = name
         self.parent = parent
         self.fd = fd
-        self.size = 4096
         self.content = ''
         self.offset = 0
         self.date = str(datetime.now())
+
+        self.fsa = FileSystemAllocation(offset, 4096)

@@ -32,8 +32,8 @@ class Open():
         self.flag = flag
 
     def run(self):
-        existing_file = self.shell.current_directory.find_child(self.filename)
-        if isinstance(existing_file, Directory):
+        existing = self.shell.current_directory.find_child(self.filename)
+        if isinstance(existing, Directory):
             print('open: ' + self.filename + ': This is a directory')
             return
 
@@ -43,12 +43,12 @@ class Open():
 
         # If reading mode
         if self.flag == 'r':
-            if existing_file is None:
+            if existing is None:
                 print('open: ' + self.filename + ': No such file')
                 return
             else:
-                self.file_system.open_files.append((existing_file.fd, 'r', existing_file))
-                print('Success, fd = ' + str(existing_file.fd))
+                self.file_system.open_files.append((existing.child.fd, 'r', existing))
+                print('Success, fd = ' + str(existing.child.fd))
 
         # If writing mode
         elif self.flag == 'w':
@@ -57,10 +57,10 @@ class Open():
             new_file = File(self.shell.current_directory, self.filename, new_fd)
 
             # Remove existing file of same name if it exists
-            if existing_file is not None:
-                self.shell.current_directory.children.remove((self.filename, existing_file))
+            if existing is not None:
+                self.shell.current_directory.children.remove((self.filename, existing))
 
-            self.shell.current_directory.add_child(self.filename, new_file)
+            self.shell.current_directory.add_child(Child(self.filename, new_file))
             self.file_system.open_files.append((new_file.fd, 'w', new_file))
             print('Success, fd = ' + str(new_file.fd))
 
@@ -198,7 +198,7 @@ class MKDIR():
             return
 
         new_directory = Directory(self.shell.current_directory, self.dirname)  # create new directory
-        self.shell.current_directory.add_child(self.dirname, new_directory)
+        self.shell.current_directory.add_child(Child(self.dirname, new_directory))
         return
 
 
@@ -224,7 +224,7 @@ class RMDIR():
             print('rmdir: ' + self.dirname + ': Cannot remove that directory')
             return
 
-        self.shell.current_directory.children.remove((self.dirname, deletion))
+        self.shell.current_directory.children.remove(deletion)
         return
 
 
@@ -255,7 +255,7 @@ class CD():
             return current_directory
 
         move = current_directory.find_child(dirlist[0])
-        if move is None or not isinstance(move, Directory):
+        if move is None or not isinstance(move.child, Directory):
             return None
         else:
             return self.recursive_cd(move, dirlist[1:])
@@ -285,13 +285,14 @@ class CAT():
         self.filename = filename
 
     def run(self):
-        catted_file = self.shell.current_directory.find_child(self.filename)
+        catted = self.shell.current_directory.find_child(self.filename)
         # see if it exists, see if it is a file
-        if catted_file is None or not isinstance(catted_file, File):
+        if catted is None or not isinstance(catted.child, File):
             print('cat: ' + self.filename + ': Not a file')
             return
 
-        print catted_file.content
+        print catted.child.content
+        # TODO: print self.file_system.load_from_disk(catted.child.fsa.offset, catted.child.fsa.size)
         return
 
 
