@@ -86,17 +86,17 @@ class Read():
 
     def run(self):
         # find file based on fd
-        open_file, mode = self.file_system.get_open_file(self.fd)
-        if open_file is None or mode != 'r':
+        open_file = self.file_system.find_open_fd(self.fd)
+        if open_file is None or open_file.mode != 'r':
             print('read: ' + self.fd + ': that file is not open for reading')
             return
 
-        if open_file.offset + self.size > open_file.size:
-            print('read: ' + self.fd + ': that file only has ' + open_file.size - open_file.offset + ' bytes left')
+        if open_file.file.offset + self.size > open_file.file.size:
+            print('read: ' + self.fd + ': that file only has ' + str(open_file.file.size - open_file.file.offset) + ' bytes left')
             return
 
-        print(open_file.content[open_file.offset: open_file.offset + self.size])
-        open_file.offset += self.size
+        print(open_file.file.content[open_file.file.offset: open_file.file.offset + self.size])
+        open_file.file.offset += self.size
         return
 
 
@@ -117,18 +117,18 @@ class Write():
 
     def run(self):
         # find file based on fd
-        open_file, mode = self.file_system.get_open_file(self.fd)
-        if open_file is None or mode != 'w':
+        open_file = self.file_system.get_open_fd(self.fd)
+        if open_file is None or open_file.mode != 'w':
             print('write: ' + self.fd + ': that file is not open for writing')
             return
 
-        if len(open_file.content) + len(self.string) > open_file.size:
-            open_file.size += 4096
+        if len(open_file.file.content) + len(self.string) > open_file.file.size:
+            open_file.file.size += 4096
 
-        new_content = open_file.content[0:open_file.offset] + self.string
-        open_file.offset += len(self.string)
-        new_content += open_file.content[open_file.offset:]
-        open_file.content = new_content
+        new_content = open_file.file.content[0:open_file.file.offset] + self.string
+        open_file.file.offset += len(self.string)
+        new_content += open_file.file.content[open_file.file.offset:]
+        open_file.file.content = new_content
 
         return
 
@@ -148,16 +148,16 @@ class Seek():
 
     def run(self):
         # find file based on fd
-        open_file, mode = self.file_system.get_open_file(self.fd)
+        open_file = self.file_system.get_open_fd(self.fd)
         if open_file is None:
             print('seek: ' + self.fd + ': that file is not open')
             return
 
-        if open_file.offset + self.offset > open_file.size:
-            print('seek: ' + self.fd + ': that file only has ' + open_file.size - open_file.offset + ' bytes left')
+        if open_file.file.offset + self.offset > open_file.file.size:
+            print('seek: ' + self.fd + ': that file only has ' + str(open_file.file.size - open_file.file.offset) + ' bytes left')
             return
 
-        open_file.offset += self.offset
+        open_file.file.offset += self.offset
         return
 
 
@@ -172,12 +172,12 @@ class Close():
         self.fd = fd
 
     def run(self):
-        close_file, close_mode = self.file_system.get_open_file(self.fd)
+        close_file = self.file_system.get_open_fd(self.fd)
         if close_file is None:
             print('close: ' + self.fd + ': that file is not open')
             return
 
-        self.file_system.open_files.remove((self.fd, close_mode, close_file))
+        self.file_system.open_files.remove(close_file)
         return
 
 

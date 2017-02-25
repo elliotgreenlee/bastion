@@ -26,7 +26,7 @@ class FileSystem:
         self.root = Directory(None, "/")
         self.root.parent = self.root
         self.root.children = []
-        self.root.add_child('..', self.root.parent)
+        self.root.add_child(Child('..', self.root.parent))
 
         self.free_list = [FileSystemAllocation(20971520, 83886080)]  # 20 MB in, size 80 MB
 
@@ -44,7 +44,7 @@ class FileSystem:
         self.root = Directory(None, "/")
         self.root.parent = self.root
         self.root.children = []
-        self.root.add_child('..', self.root.parent)
+        self.root.add_child(Child('..', self.root.parent))
 
         self.free_list = [FileSystemAllocation(20971520, 83886080)]  # 20 MB in, size 80 MB
 
@@ -59,17 +59,18 @@ class FileSystem:
         self.fd += 1
         return current_fd
 
-    def get_open_file(self, fd):
-        print self.open_files
-        sys.stdout.flush()
-        for file in self.open_files:
-            if str(fd) == str(file[0]):
-                return file[2], file[1]
+    def find_open_fd(self, fd):
+        for open_file in self.open_files:
+            if str(fd) == str(open_file.fd):
+                return open_file
 
-    def find_open_file(self, name):
-        for file in self.open_files:
-            if name == file[2].name:
-                return file[2]
+    def find_open_name(self, name):
+        for open_file in self.open_files:
+            if name == open_file.file.name:
+                return open_file
+
+    def add_open_file(self, open_file):
+        self.open_files.append(open_file)
 
     def get_free_space(self, size):
         """
@@ -145,6 +146,13 @@ class FileSystem:
                     combine = True
                     # break out of inner loop
                     break
+
+
+class OpenFile:
+    def __init__(self, fd, mode, file):
+        self.fd = fd
+        self.mode = mode
+        self.file = file
 
 
 class Directory:
