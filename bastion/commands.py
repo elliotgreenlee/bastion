@@ -45,7 +45,8 @@ class Open():
                 print('open: ' + self.filename + ': No such file')
                 return
             else:
-                self.file_system.add_open_file(OpenFile(existing.child.fd, 'r', existing))
+                existing.child.offset = 0
+                self.file_system.add_open_file(OpenFile(existing.child.fd, 'r', existing.child))
                 print('Success, fd = ' + str(existing.child.fd))
 
         # If writing mode
@@ -89,17 +90,21 @@ class Read():  # TODO:
         self.size = size
 
     def run(self):
+        self.size = int(self.size)
+
         # find file based on fd
         open_file = self.file_system.find_open_fd(self.fd)
         if open_file is None or open_file.mode != 'r':
             print('read: ' + self.fd + ': that file is not open for reading')
             return
 
-        if open_file.file.offset + self.size > open_file.file.size:
-            print('read: ' + self.fd + ': that file only has ' + str(open_file.file.size - open_file.file.offset) + ' bytes left')
+        if open_file.file.offset + self.size > open_file.file.content_size:
+            print('read: ' + self.fd + ': that file only has ' + str(open_file.file.content_size - open_file.file.offset) + ' bytes left')
             return
 
-        print(open_file.file.content[open_file.file.offset: open_file.file.offset + self.size])
+        content = self.file_system.load_from_disk(open_file.file.fsa.offset, open_file.file.content_size)
+
+        print(content[open_file.file.offset: open_file.file.offset + self.size])
         open_file.file.offset += self.size
         return
 
@@ -164,7 +169,7 @@ class Write():
 # offset at <offset>. The <offset> means the number of bytes from
 # the beginning of the file.
 # Example: seek 5 10
-class Seek():  # TODO:
+class Seek():
     def __init__(self, shell, fd, offset):
         self.shell = shell
         self.file_system = self.shell.file_system
@@ -205,6 +210,7 @@ class Close():
             print('close: ' + self.fd + ': that file is not open')
             return
 
+        close_file.file.offset = 0
         self.file_system.open_files.remove(close_file)
         self.file_system.available_fds.append(self.fd)
         return
