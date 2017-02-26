@@ -80,7 +80,7 @@ class Open():
 # <size> bytes after read.
 # Example: read 5 10 shell returns the contents of the file
 # (assuming it has been written)
-class Read():  # TODO:
+class Read():
     def __init__(self, shell, fd, size):
         self.shell = shell
         self.file_system = self.shell.file_system
@@ -260,9 +260,31 @@ class RMDIR():
             print('rmdir: ' + self.dirname + ': Cannot remove that directory')
             return
 
+        self.recursive_delete_children(deletion)
+
         self.shell.current_directory.children.remove(deletion)
-        # TODO: recursively remove subdirectories and delete and free files?
+
         return
+
+    def recursive_delete_children(self, dir):
+
+        # for every child
+        for child in dir.child.children:
+            # if it is a file
+            if isinstance(child.child, File):
+                # close and free and delete
+                open_file = self.file_system.find_open_fd(child.child.fd)
+                if open_file is not None:
+                    self.file_system.open_files.remove(open_file)
+                self.file_system.free_space(child.child.fsa.offset, child.child.fsa.size)
+                dir.child.children.remove(child)
+
+            # if it is a directory
+            if isinstance(child.child, Directory):
+                if child.name != '..':
+                    # delete children and delete
+                    self.recursive_delete_children(child)
+                    dir.child.children.remove(child)
 
 
 # Change the current directory to <dirname>.
