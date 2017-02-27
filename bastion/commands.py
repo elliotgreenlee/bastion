@@ -398,7 +398,7 @@ class Tree():
 # Import a file from the host machine file system to
 # the current directory.
 # Example: import /d/foo.txt foo.txt
-class Import():  # TODO:
+class Import():
     def __init__(self, shell, srcname, destname):
         self.shell = shell
         self.file_system = self.shell.file_system
@@ -408,19 +408,23 @@ class Import():  # TODO:
         self.destname = destname
 
     def run(self):
-        # open external file
-        with open(self.srcname, 'r+') as f:
-            f.seek(0)
-            # read content into a string
-            content = f.read()
-            f.close()
+        try:
+            # open external file
+            with open(self.srcname, 'r') as f:
+                f.seek(0)
+                # read content into a string
+                content = f.read()
+                f.close()
+        except IOError:
+            print('import: ' + self.srcname + ': File does not exist')
+            return
 
         # see if file already with that name
         if self.shell.current_directory.find_child(self.destname) is not None:
             # close it
             # delete
             # free
-            RMDIR(self.shell, self.destname).run() # TODO: see if this works
+            RMDIR(self.shell, self.destname).run()
 
         # open a new file
         # Get disk space
@@ -442,7 +446,7 @@ class Import():  # TODO:
 # Export a file from the current directory to the host
 # machine file system.
 # Example: export foo.txt /d/foo.txt
-class Export():  # TODO:
+class Export():
     def __init__(self, shell, srcname, destname):
         self.shell = shell
         self.file_system = self.shell.file_system
@@ -451,11 +455,18 @@ class Export():  # TODO:
         self.destname = destname
 
     def run(self):
-        # load content from srcname
-        content = load_from_disk(self, offset, size)
+        # find file name srcname
+        existing = self.shell.current_directory.find_child(self.srcname)
+        if existing is None:
+            print('export: ' + self.srcname + ': File does not exist')
+            return
 
+        # load content from srcname
+        content = self.file_system.load_from_disk(existing.child.fsa.offset, existing.child.content_size)
+
+        # write to external file
         with open(self.destname, 'w') as f:
             f.seek(0)
-            f.write(content)
+            f.write(content.replace('\\n', '\n').replace('\\t', '\t'))
             f.close()
         return

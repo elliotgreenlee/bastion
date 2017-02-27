@@ -80,8 +80,6 @@ class FileSystem:
             Return offset where space starts, return None otherwise
         """
 
-        # TODO: make sure this is correct
-
         # find size that works in free_list
         chosen_space = None
         for free_space in self.free_list:
@@ -106,7 +104,6 @@ class FileSystem:
         return chosen_offset
 
     def load_from_disk(self, offset, size):
-        # TODO: Make sure this is correct
         # load file at offset of length size into temporary string content
         with open(self.CONST_FILE_SYSTEM_NAME, 'r+') as f:
             f.seek(offset)
@@ -120,7 +117,6 @@ class FileSystem:
             Write content (bytes) to offset, return None if not possible.
         """
 
-        # TODO: Make sure this is correct (it should overwrite what is there)
         # put content at offset
         with open(self.CONST_FILE_SYSTEM_NAME, 'r+') as f:
             f.seek(offset)
@@ -131,8 +127,6 @@ class FileSystem:
         """
             Go to offset and delete up to size
         """
-
-        # TODO: Check to make sure these are right.
 
         # append (offset, size) to the free_list
         self.free_list.append(FileSystemAllocation(offset, size))

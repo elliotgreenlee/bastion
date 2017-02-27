@@ -89,7 +89,6 @@ class Shell(object):
         cmd_str = input_pieces[0]
         number_of_arguments = len(input_pieces) - 1
 
-        # TODO: add error codes for return values, handle with error() function in run()
             # No arguments
             # Incorrect number of arguments
             # Arguments don't work in function
