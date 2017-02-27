@@ -12,7 +12,6 @@ class FileSystemAllocation:
 
 class FileSystem:
     CONST_FILE_SYSTEM_NAME = "file_system.bastion"
-    TOTAL_BLOCKS = 250
     BLOCK_SIZE = 4096
 
     def __init__(self):

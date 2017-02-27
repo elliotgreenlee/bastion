@@ -46,7 +46,8 @@ class Open():
                 return
             else:
                 existing.child.offset = 0
-                self.file_system.add_open_file(OpenFile(existing.child.fd, 'r', existing.child))
+                new_fd = self.file_system.get_new_fd()
+                self.file_system.add_open_file(OpenFile(new_fd, 'r', existing.child))
                 print('Success, fd = ' + str(existing.child.fd))
 
         # If writing mode
@@ -104,7 +105,7 @@ class Read():
 
         content = self.file_system.load_from_disk(open_file.file.fsa.offset, open_file.file.content_size)
 
-        print(content[open_file.file.offset: open_file.file.offset + self.size])
+        print(content[open_file.file.offset: open_file.file.offset + self.size]).replace('\\n', '\n').replace('\\t', '\t')
         open_file.file.offset += self.size
         return
 
@@ -260,7 +261,8 @@ class RMDIR():
             print('rmdir: ' + self.dirname + ': Cannot remove that directory')
             return
 
-        self.recursive_delete_children(deletion)
+        if isinstance(deletion.child, Directory):
+            self.recursive_delete_children(deletion)
 
         self.shell.current_directory.children.remove(deletion)
 
@@ -275,6 +277,7 @@ class RMDIR():
                 # close and free and delete
                 open_file = self.file_system.find_open_fd(child.child.fd)
                 if open_file is not None:
+                    self.file_system.available_fds.append(child.child.fd)
                     self.file_system.open_files.remove(open_file)
                 self.file_system.free_space(child.child.fsa.offset, child.child.fsa.size)
                 dir.child.children.remove(child)
@@ -405,6 +408,34 @@ class Import():  # TODO:
         self.destname = destname
 
     def run(self):
+        # open external file
+        with open(self.srcname, 'r+') as f:
+            f.seek(0)
+            # read content into a string
+            content = f.read()
+            f.close()
+
+        # see if file already with that name
+        if self.shell.current_directory.find_child(self.destname) is not None:
+            # close it
+            # delete
+            # free
+            RMDIR(self.shell, self.destname).run() # TODO: see if this works
+
+        # open a new file
+        # Get disk space
+        offset = self.file_system.get_free_space(len(content))
+        if offset == -1:
+            print('open: There is not enough space on disk for a new file')
+            return
+
+        new_file = File(self.shell.current_directory, self.destname, -1, offset)
+        new_file.content_size = len(content)
+        new_file.fsa.size = len(content)
+        self.shell.current_directory.add_child(Child(self.destname, new_file))
+
+        # write content to new file
+        self.file_system.write_to_disk(new_file.fsa.offset, content)
         return
 
 
@@ -420,4 +451,11 @@ class Export():  # TODO:
         self.destname = destname
 
     def run(self):
+        # load content from srcname
+        content = load_from_disk(self, offset, size)
+
+        with open(self.destname, 'w') as f:
+            f.seek(0)
+            f.write(content)
+            f.close()
         return
