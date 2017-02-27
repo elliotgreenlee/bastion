@@ -49,7 +49,7 @@ class Open():
                 existing.child.offset = 0
                 new_fd = self.file_system.get_new_fd()
                 self.file_system.add_open_file(OpenFile(new_fd, 'r', existing.child))
-                print('Success, fd = ' + str(existing.child.fd))
+                print('Success, fd = ' + str(new_fd))
 
         # If writing mode
         elif self.flag == 'w':
