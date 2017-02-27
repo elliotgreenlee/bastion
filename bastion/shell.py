@@ -20,9 +20,13 @@ def accept_input(validator=None):
     """
     try:
         if validator is None:
-            text = raw_input("bastion> ")
+            try:
+                text = raw_input("bastion> \n")
+            except EOFError:
+                print("Exiting!")
+                sys.exit(0)
         else:
-            text = raw_input("bastion> ")
+            text = raw_input("bastion> \n")
             if not validator(text):
                 return None
 

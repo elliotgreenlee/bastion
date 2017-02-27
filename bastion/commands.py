@@ -1,4 +1,5 @@
 from .filesystem import *
+import sys
 
 
 # Make a new file system, i.e., format the disk so that it
@@ -377,22 +378,24 @@ class Tree():
     def tree_print(self, directory, level):
         # tree_print iterates through each child.
         for child in directory.children:
+            if level > 0:
+                sys.stdout.write('|  ')
+            for i in range(1, level):
+                sys.stdout.write('   ')
+            sys.stdout.write('|--')
 
             # if file, print based on level
             if isinstance(child.child, File):
-                for i in range(0, level):
-                    print '\t',
                 print child.name, child.child.fsa.size, child.child.date
 
             # if directory, print based on level, call tree_print(directory, level+1)
             if isinstance(child.child, Directory):
-                for i in range(0, level):
-                    print '\t',
                 print child.name
 
                 # Don't recurse upwards
                 if child.name != '..':
                     self.tree_print(child.child, level+1)
+
 
 
 # Import a file from the host machine file system to
