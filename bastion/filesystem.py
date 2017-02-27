@@ -24,7 +24,7 @@ class FileSystem:
         self.root.children = []
         self.root.add_child(Child('..', self.root.parent))
 
-        self.free_list = [FileSystemAllocation(0, 83886080)]  # first 80 MB
+        self.free_list = [FileSystemAllocation(0, 104857600)]  # 100 MB
 
     def initialize(self):
         """If the filesystem does not exist yet or we are
@@ -45,7 +45,7 @@ class FileSystem:
         self.root.children = []
         self.root.add_child(Child('..', self.root.parent))
 
-        self.free_list = [FileSystemAllocation(0, 83886080)]  # first 80 MB
+        self.free_list = [FileSystemAllocation(0, 104857600)]  # 100 MB
 
     def on_disk(self):
         if os.path.isfile(self.CONST_FILE_SYSTEM_NAME):
